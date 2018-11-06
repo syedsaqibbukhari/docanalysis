@@ -1,4 +1,8 @@
-lysis
+#docanalysis
 
-You can find Binarization, deSkew, Crop and deWarp method instructions in the following files :
-README_binarization.md instruction for binarization methoD
+To see how to run Binarization, deSkew, Crop and deWarp method, please follow corresponding below files :
+README_binarize.md instruction for binarization method
+README_deskew.md instruction for deSkew method
+README_crop.md instruction for crop method
+README_dewarp.md instruction for deWarp method
+
