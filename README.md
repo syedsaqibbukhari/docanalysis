@@ -6,7 +6,7 @@ README_binarize.md instruction for binarization method
 
 README_deskew.md instruction for deSkew method
 
-README_crop.md instruction for crop method
+README_cropping.md instruction for cropping method
 
 README_dewarp.md instruction for deWarp method
 
