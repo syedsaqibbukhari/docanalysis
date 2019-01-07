@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #======================================================================
 # ====================================
 # README file for Page Cropping component
@@ -47,52 +48,24 @@ Image crop using non-linear processing.
 """)
 
 parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
-parser.add_argument('--maxRularArea',type=float,help='Consider maximum rular area')
-parser.add_argument('--minRularArea',type=float,help='Consider minimum rular area')
-parser.add_argument('--rularWidth',type=float,help='maximum rular width')
-parser.add_argument('--positionLeft',type=float,help='rular position in left')
-parser.add_argument('--positionRight',type=float,help='rular position in right')
-parser.add_argument('--positionBelow',type=float,help='rular position in below')
-parser.add_argument('--rularRatioMax',type=float,help='rular position in below')
-parser.add_argument('--rularRatioMin',type=float,help='rular position in below')
-parser.add_argument('--colSeparator',type=float, help='consider space between column. 25% of width')
-parser.add_argument('--minArea',type=float, help='rular position in below')
+# parser.add_argument('--maxRularArea',type=float,help='Consider maximum ruler area')
+# parser.add_argument('--minRularArea',type=float,help='Consider minimum ruler area')
+# parser.add_argument('--rulerWidth',type=float,help='maximum ruler width')
+# parser.add_argument('--positionLeft',type=float,help='ruler position in left')
+# parser.add_argument('--positionRight',type=float,help='ruler position in right')
+# parser.add_argument('--positionBelow',type=float,help='ruler position in below')
+# parser.add_argument('--rulerRatioMax',type=float,help='ruler position in below')
+# parser.add_argument('--rulerRatioMin',type=float,help='ruler position in below')
+# parser.add_argument('--colSeparator',type=float, help='consider space between column. 25% of width')
+# parser.add_argument('--minArea',type=float, help='check whether it is text area or noise area')
 #parser.add_argument('files',nargs='+')
 parser.add_argument('-O','--Output',default=None,help="output directory")
 parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
 parser.add_argument('-I','--Input',default=None,help="Input directory")
 parser.add_argument('-m','--mets',default=None,help="METs input file")
 parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-parser.add_argument('-g','--group',default=None,help="METs image group id")
 
 args = parser.parse_args()
-
-## Read parameter values from json file
-if args.parameter:
-    if not os.path.exists(args.parameter):
-        print("Error : Parameter file does not exists.")
-        sys.exit(0)
-    else:
-        param = json.load(open(args.parameter))
-else:
-    if not os.path.exists('ocrd-anyBaseOCR-parameter.json'):
-        print("Error : Parameter file does not exists.")
-        sys.exit(0)
-    else:
-        param = json.load(open('ocrd-anyBaseOCR-parameter.json'))
-
-args.maxRularArea = param["anyBaseOCR"]["crop"]["maxRularArea"]
-args.minRularArea = param["anyBaseOCR"]["crop"]["minRularArea"]
-args.rularWidth = param["anyBaseOCR"]["crop"]["rularWidth"]
-args.positionLeft = param["anyBaseOCR"]["crop"]["positionLeft"]
-args.positionRight = param["anyBaseOCR"]["crop"]["positionRight"]
-args.positionBelow = param["anyBaseOCR"]["crop"]["positionBelow"]
-args.rularRatioMax = param["anyBaseOCR"]["crop"]["rularRatioMax"]
-args.rularRatioMin = param["anyBaseOCR"]["crop"]["rularRatioMin"]
-args.colSeparator = param["anyBaseOCR"]["crop"]["colSeparator"]
-args.minArea = param["anyBaseOCR"]["crop"]["minArea"]
-
-### End to read parameters
 
 def parseXML(fpath):
     input_files=[]
@@ -137,7 +110,7 @@ def write_crop_coordinate(base, coordinate):
 	with open(base + '-frame-pf.dat', 'w') as fp:
 		fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
 
-def remove_rular(arg, base):
+def remove_ruler(arg, base):
 	basefile = ocrolib.allsplitext(os.path.basename(arg))[0]    
 	img = cv2.imread(arg)
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -151,7 +124,7 @@ def remove_rular(arg, base):
 	rects = sorted(rects,key=lambda  x:(x[2]*x[3]),reverse=True)
 	rects = [r for r in rects if (imgArea*args.maxRularArea)>(r[2]*r[3])>(imgArea*args.minRularArea)]	## consider those rectangle whose area>10000 and less than one-fourth of images
 
-	## detect child rectangles. Usually those are not rular. Rular position are basically any one side.
+	## detect child rectangles. Usually those are not ruler. Rular position are basically any one side.
 	removeRect=[]
 	for i, rect1 in enumerate(rects):
 		(x1,y1,w1,h1)=rect1
@@ -166,12 +139,12 @@ def remove_rular(arg, base):
 	predictRular=[]
 	for rect in rects:
 		(x,y,w,h)=rect		
-		if (w<width*args.rularWidth) and ((y>height*args.positionBelow) or ((x+w)<width*args.positionLeft) or (x>width*args.positionRight)):
-			if (args.rularRatioMin<round(float(w)/float(h),2)<args.rularRatioMax) or (args.rularRatioMin<round(float(h)/float(w),2)<args.rularRatioMax):
+		if (w<width*args.rulerWidth) and ((y>height*args.positionBelow) or ((x+w)<width*args.positionLeft) or (x>width*args.positionRight)):
+			if (args.rulerRatioMin<round(float(w)/float(h),2)<args.rulerRatioMax) or (args.rulerRatioMin<round(float(h)/float(w),2)<args.rulerRatioMax):
 				blackPixel = np.count_nonzero(img[y:y+h,x:x+w]==0)
 				predictRular.append((x,y,w,h,blackPixel))
 
-	## Finally check number of black pixel to avoid false rular
+	## Finally check number of black pixel to avoid false ruler
 	if predictRular:
 		predictRular = sorted(predictRular,key=lambda  x:(x[4]),reverse=True)
 		x,y,w,h,t = predictRular[0]
@@ -179,7 +152,7 @@ def remove_rular(arg, base):
 	save_file_path = base + '.pf.png'
 	cv2.imwrite(save_file_path, img)	
 	return save_file_path
-# End of function remove_rular(arg)
+# End of function remove_ruler(arg)
 
 def BorderLine(MaxBoundary, lines, index, flag):
 	getLine=1
@@ -427,42 +400,78 @@ def crop_area(textarea, binImg, rgb, base):
 
 	return textarea
 
-# mendatory parameter check
-if not args.mets or not args.Input or not args.Output or not args.work:
-    parser.print_help()
-    print("Example: python ocrd-anyBaseOCR-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-    sys.exit(0)
 
-if args.work:
-    if not os.path.exists(args.work):
-        os.mkdir(args.work)
+def parse_data(arguments):
+	arguments = arguments['tools']['ocrd-anyBaseOCR-crop']['parameters']
 
-files = parseXML(args.mets)
-fname=[]
-for i, f in enumerate(files):
-	print "Process file: ", str(f) , i+1
-	base,_ = ocrolib.allsplitext(str(f))
-	binImg = ocrolib.read_image_binary(str(f))
+	for key, val in arguments.items():
+		parser.add_argument('--%s' % key,
+	            type=eval(val["type"]),
+	            help=val["description"],
+	            default=val["default"])
+	return parser
 
-	lineDetectH=[]; lineDetectV=[]
-	fpath = remove_rular(str(f), base)
-	textarea, rgb, height, width = detect_textarea(fpath)
-	args.colSeparator = int(width * args.colSeparator)
+## Read parameter values from json file
+def get_parameters():
+    if args.parameter:
+        if not os.path.exists(args.parameter):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(args.parameter) as json_file:
+                json_data = json.load(json_file)
+    else:
+        parameter_path = os.path.dirname(os.path.realpath(__file__))
+        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')) as json_file:
+                json_data = json.load(json_file)
+    parser = parse_data(json_data)
+    parameters = parser.parse_args()
+    return parameters
 
-	if len(textarea)>1:
-		textarea = crop_area(textarea, binImg, rgb, base)
-		if len(textarea)==0:
+
+if __name__ == "__main__":
+	args = get_parameters()
+
+	# mendatory parameter check
+	if not args.mets or not args.Input or not args.Output or not args.work:
+	    parser.print_help()
+	    print("Example: python ocrd-anyBaseOCR-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
+	    sys.exit(0)
+
+	if args.work:
+	    if not os.path.exists(args.work):
+	        os.mkdir(args.work)
+
+	files = parseXML(args.mets)
+	fname=[]
+	for i, f in enumerate(files):
+		print "Process file: ", str(f) , i+1
+		base,_ = ocrolib.allsplitext(str(f))
+		binImg = ocrolib.read_image_binary(str(f))
+
+		lineDetectH=[]; lineDetectV=[]
+		fpath = remove_ruler(str(f), base)
+		textarea, rgb, height, width = detect_textarea(fpath)
+		args.colSeparator = int(width * args.colSeparator)
+
+		if len(textarea)>1:
+			textarea = crop_area(textarea, binImg, rgb, base)
+			if len(textarea)==0:
+				select_borderLine(fpath, base)
+		elif len(textarea)==1 and (height*width*0.5 <  (abs(textarea[0][2]-textarea[0][0]) * abs(textarea[0][3]-textarea[0][1]))):
+			x1,y1,x2,y2 = textarea[0]		
+			x1 = x1-20 if x1>20 else 0
+			x2 = x2+20 if x2<width-20 else width
+			y1 = y1-40 if y1>40 else 0
+			y2 = y2+40 if y2<height-40 else height
+
+			save_pf(base, [x1,y1,x2,y2])		
+		else:
 			select_borderLine(fpath, base)
-	elif len(textarea)==1 and (height*width*0.5 <  (abs(textarea[0][2]-textarea[0][0]) * abs(textarea[0][3]-textarea[0][1]))):
-		x1,y1,x2,y2 = textarea[0]		
-		x1 = x1-20 if x1>20 else 0
-		x2 = x2+20 if x2<width-20 else width
-		y1 = y1-40 if y1>40 else 0
-		y2 = y2+40 if y2<height-40 else height
 
-		save_pf(base, [x1,y1,x2,y2])		
-	else:
-		select_borderLine(fpath, base)
-
-	fname.append(base + '.pf.png')
-write_to_xml(fname)
+		fname.append(base + '.pf.png')
+	write_to_xml(fname)

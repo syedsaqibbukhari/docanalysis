@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #======================================================================
 # ====================================
 # README file for Skew Correction component
@@ -39,8 +40,6 @@
 
 #*********** LICENSE ********************
 #======================================================================
-#!/usr/bin/env python
-
 from __future__ import print_function
 from pylab import *
 from numpy.ctypeslib import ndpointer
@@ -61,48 +60,13 @@ This is a compute-intensive deskew method that works on degraded and historical 
 """)
 
 parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
-parser.add_argument('-e','--escale',type=float,help='scale for estimating a mask over the text region, default: %(default)s')
-parser.add_argument('-t','--threshold',type=float,help='threshold, determines lightness, default: %(default)s')
-parser.add_argument('-b','--bignore',type=float,help='ignore this much of the border for threshold estimation, default: %(default)s')
-parser.add_argument('-ms','--maxskew',type=float,help='skew angle estimation parameters (degrees), default: %(default)s')
-parser.add_argument('--skewsteps',type=int,help='steps for skew angle estimation (per degree), default: %(default)s')
-parser.add_argument('--debug',type=float,help='display intermediate results, default: %(default)s')
-parser.add_argument('--lo',type=float,help='percentile for black estimation, default: %(default)s')
-parser.add_argument('--hi',type=float,help='percentile for white estimation, default: %(default)s')
-parser.add_argument('-Q','--parallel',type=int)
 parser.add_argument('-O','--Output',default=None,help="output directory")
 parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
 parser.add_argument('-I','--Input',default=None,help="Input directory")
 parser.add_argument('-m','--mets',default=None,help="METs input file")
 parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-parser.add_argument('-g','--group',default=None,help="METs image group id")
 
 args = parser.parse_args()
-
-## Read parameter values from json file
-if args.parameter:
-    if not os.path.exists(args.parameter):
-        print("Error : Parameter file does not exists.")
-        sys.exit(0)
-    else:
-        param = json.load(open(args.parameter))
-else:
-    if not os.path.exists('ocrd-anyBaseOCR-parameter.json'):
-        print("Error : Parameter file does not exists.")
-        sys.exit(0)
-    else:
-        param = json.load(open('ocrd-anyBaseOCR-parameter.json'))
-
-args.bignore = param["anyBaseOCR"]["deskew"]["bignore"]
-args.escale = param["anyBaseOCR"]["deskew"]["escale"]
-args.threshold = param["anyBaseOCR"]["deskew"]["threshold"]
-args.lo = param["anyBaseOCR"]["deskew"]["lo"]
-args.hi = param["anyBaseOCR"]["deskew"]["hi"]
-args.maxskew = param["anyBaseOCR"]["deskew"]["maxskew"]
-args.skewsteps = param["anyBaseOCR"]["deskew"]["skewsteps"]
-args.debug = param["anyBaseOCR"]["deskew"]["debug"]
-args.parallel = param["anyBaseOCR"]["deskew"]["parallel"]
-### End to read parameters
 
 def parseXML(fpath):
     input_files=[]
@@ -219,18 +183,50 @@ def deskew(fpath, job):
     ocrolib.write_image_binary(base+".ds.png",bin)
     return base+".ds.png"
 
-# mendatory parameter check
-if not args.mets or not args.Input or not args.Output or not args.work:
-    parser.print_help()
-    print("Example: python ocrd-anyBaseOCR-deskew.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-    sys.exit(0)
+def parse_data(arguments):
+    arguments = arguments['tools']['ocrd-anyBaseOCR-deskew']['parameters']
 
-if args.work:
-    if not os.path.exists(args.work):
-        os.mkdir(args.work)
+    for key, val in arguments.items():
+        parser.add_argument('--%s' % key,
+                type=eval(val["type"]),
+                help=val["description"],
+                default=val["default"])
+    return parser
 
-files = parseXML(args.mets)
-fname=[]
-for i, f in enumerate(files):
-    fname.append(deskew(str(f),i+1))
-write_to_xml(fname)
+## Read parameter values from json file
+def get_parameters():
+    if args.parameter:
+        if not os.path.exists(args.parameter):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(args.parameter) as json_file:
+                json_data = json.load(json_file)
+    else:
+        parameter_path = os.path.dirname(os.path.realpath(__file__))
+        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')) as json_file:
+                json_data = json.load(json_file)
+    parser = parse_data(json_data)
+    parameters = parser.parse_args()
+    return parameters
+
+
+if __name__ == "__main__":
+    args = get_parameters()
+
+    # mendatory parameter check
+    if not args.mets or not args.Input or not args.Output or not args.work:
+        parser.print_help()
+        print("Example: python ocrd-anyBaseOCR-deskew.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
+        sys.exit(0)
+
+
+    files = parseXML(args.mets)
+    fname=[]
+    for i, f in enumerate(files):
+        fname.append(deskew(str(f),i+1))
+    write_to_xml(fname)

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #====================================================================
 #====================================
 #README file for Binarize component
@@ -35,8 +36,6 @@
 
 #*********** LICENSE ********************
 #=====================================================================
-#!/usr/bin/env python
-
 from __future__ import print_function
 from pylab import *
 from numpy.ctypeslib import ndpointer
@@ -64,53 +63,13 @@ and historical book pages.
 parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
 parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
 parser.add_argument('-I','--Input',default=None,help="Input directory")
-parser.add_argument('-n','--nocheck',action="store_true", help="disable error checking on inputs")
-parser.add_argument('-t','--threshold',type=float,help='threshold, determines lightness, default: %(default)s')
-parser.add_argument('-z','--zoom',type=float,help='zoom for page background estimation, smaller=faster, default: %(default)s')
-parser.add_argument('-e','--escale',type=float,help='scale for estimating a mask over the text region, default: %(default)s')
-parser.add_argument('-b','--bignore',type=float,help='ignore this much of the border for threshold estimation, default: %(default)s')
-parser.add_argument('-pe','--perc',type=float,help='percentage for filters, default: %(default)s')
-parser.add_argument('-r','--range',type=int,help='range for filters, default: %(default)s')
-parser.add_argument('-gr','--gray',action='store_true',help='force grayscale processing even if image seems binary')
-parser.add_argument('--lo',type=float,help='percentile for black estimation, default: %(default)s')
-parser.add_argument('--hi',type=float,help='percentile for white estimation, default: %(default)s')
-parser.add_argument('--debug',type=float,help='display intermediate results, default: %(default)s')
-parser.add_argument('--show',action='store_true',help='display final result')
-parser.add_argument('--rawcopy',action='store_true',help='also copy the raw image')
 parser.add_argument('-O','--Output',default=None,help="output directory")
 parser.add_argument('-m','--mets',default=None,help="METs input file")
 parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-parser.add_argument('-g','--group',default=None,help="METs image group id")
-#parser.add_argument('files',nargs='+')
-parser.add_argument('-Q','--parallel',type=int)
+parser.add_argument('-n','--nocheck',action="store_true", help="disable error checking on inputs")
+parser.add_argument('--show', action='store_true', help='display debug result')
+parser.add_argument('-gr','--gray',action='store_true',help='force grayscale processing even if image seems binary')
 args = parser.parse_args()
-
-## Read parameter values from json file
-if args.parameter:
-	if not os.path.exists(args.parameter):
-		print("Error : Parameter file does not exists.")
-		sys.exit(0)
-	else:
-		param = json.load(open(args.parameter))
-else:
-	if not os.path.exists('ocrd-anyBaseOCR-parameter.json'):
-		print("Error : Parameter file does not exists.")
-		sys.exit(0)
-	else:
-		param = json.load(open('ocrd-anyBaseOCR-parameter.json'))
-
-args.threshold = param["anyBaseOCR"]["bin"]["threshold"]
-args.zoom = param["anyBaseOCR"]["bin"]["zoom"]
-args.escale = param["anyBaseOCR"]["bin"]["escale"]
-args.bignore = param["anyBaseOCR"]["bin"]["bignore"]
-args.perc = param["anyBaseOCR"]["bin"]["perc"]
-args.range = param["anyBaseOCR"]["bin"]["range"]
-args.lo = param["anyBaseOCR"]["bin"]["lo"]
-args.hi = param["anyBaseOCR"]["bin"]["hi"]
-args.debug = param["anyBaseOCR"]["bin"]["debug"]
-args.parallel = param["anyBaseOCR"]["bin"]["parallel"]
-### End to read parameters
-
 
 def parseXML(fpath):
     input_files=[]
@@ -253,21 +212,56 @@ def process1(job):
     #write_to_xml(base+".bin.png")
     return base+".bin.png"
 
+def parse_data(arguments):
+	arguments = arguments['tools']['ocrd-anyBaseOCR-bin']['parameters']
 
-# mendatory parameter check
-if not args.mets or not args.Input or not args.Output or not args.work:
-    parser.print_help()
-    print("Example: python ocrd-anyBaseOCR-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-    sys.exit(0)
+	for key, val in arguments.items():
+		parser.add_argument('--%s' % key,
+	            type=eval(val["type"]),
+	            help=val["description"],
+	            default=val["default"])
+	return parser
 
-if args.debug>0 or args.show>0: args.parallel = 0
+## Read parameter values from json file
+def get_parameters():
+    if args.parameter:
+        if not os.path.exists(args.parameter):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(args.parameter) as json_file:
+                json_data = json.load(json_file)
+    else:
+        parameter_path = os.path.dirname(os.path.realpath(__file__))
+        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')):
+            print("Error : Parameter file does not exists.")
+            sys.exit(0)
+        else:
+            with open(os.path.join(parameter_path, 'ocrd-anyBaseOCR-parameter.json')) as json_file:
+                json_data = json.load(json_file)
+    parser = parse_data(json_data)
+    parameters = parser.parse_args()
+    return parameters
 
-if args.work:
-    if not os.path.exists(args.work):
-        os.mkdir(args.work)
 
-files = parseXML(args.mets)
-fname=[]
-for i, f in enumerate(files):
-    fname.append(process1((str(f),i+1)))
-write_to_xml(fname)
+if __name__ == "__main__":
+	args = get_parameters()
+
+	# mendatory parameter check
+	if not args.mets or not args.Input or not args.Output or not args.work:
+	    parser.print_help()
+	    print("Example: python ocrd-anyBaseOCR-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
+	    sys.exit(0)
+
+
+	if args.debug>0 or args.show: args.parallel = 0
+
+	if args.work:
+	    if not os.path.exists(args.work):
+	        os.mkdir(args.work)
+
+	files = parseXML(args.mets)
+	fname=[]
+	for i, f in enumerate(files):
+	    fname.append(process1((str(f),i+1)))
+	write_to_xml(fname)
