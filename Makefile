@@ -1,12 +1,22 @@
 exec_name_prefix = ocrd-anybaseocr
 testdir = tests
 
+export
+
+SHELL = /bin/bash
+PYTHON = python
+PIP = pip
+LOG_LEVEL = INFO
+PYTHONIOENCODING=utf8
+
 # BEGIN-EVAL makefile-parser --make-help Makefile
 
 help:
 	@echo ""
 	@echo "  Targets"
 	@echo ""
+	@echo "    deps           Install python deps via pip"
+	@echo "    install        Install"
 	@echo "    repo/assets    Clone OCR-D/assets to ./repo/assets"
 	@echo "    assets-clean   Remove assets"
 	@echo "    assets         Setup test assets"
@@ -19,6 +29,14 @@ help:
 	@echo ""
 
 # END-EVAL
+
+# Install python deps via pip
+deps:
+	$(PIP) install -r requirements.txt
+
+# Install
+install:
+	$(PIP) install .
 
 #
 # Assets
