@@ -7,10 +7,10 @@ from distutils.core import setup
 
 
 ocrolib = [c for c in glob.glob("ocrolib/*")]
-scripts = [c for c in glob.glob("ocrd-anyBaseOCR-*")]
+scripts = [c for c in glob.glob("ocrd-anybaseocr-*")]
 
 setup(
-    name = 'anyBaseOCR',
+    name = 'ocrd-anybaseocr',
     version = 'v0.0.1',
     author = "Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib",
     author_email = "Saqib.Bukhari@dfki.de, Mohammad_mohsin.reza@dfki.de, Md_ajraf.rakib@dfki.de",
