@@ -5,3 +5,4 @@ Pillow>=5.1.0
 pylsd>=0.0.2
 opencv-python>=3.4.0
 matplotlib>=2.2.4
+dominate>=2.3.5
