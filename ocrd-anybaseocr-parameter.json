@@ -10,7 +10,7 @@
       "steps": [
         "preprocessing/optimization/binarization"
       ],
-      "description": "Binarize OCR-D images with anybaseocr",
+      "description": "Binarize OCR-D images with anyBaseOCR",
       "parameters": {
       	"threshold": {"type": "float", "default": 0.5, "description": "determines lightness threshold"},
       	"zoom": {"type": "float", "default": 0.5, "description": "zoom for page background estimation, smaller value is faster"},
@@ -21,6 +21,8 @@
       	"lo": {"type": "int", "default": 5, "description": "percentile for black estimation"},
       	"hi": {"type": "int", "default": 90, "description": "percentile for white estimation"},
       	"debug": {"type": "int", "default": 0, "enum": [0, 1], "description": "display intermediate results"},
+        "nocheck": {"type": "str", "action": "store_true", "default": 0, "description": "disable error checking on inputs"},
+        "gray": {"type": "str", "action": "store_true", "default": 0, "description": "force grayscale processing even if image seems binary"},
       	"parallel": {"type": "int", "default": 0, "description": "indicates single processing of images"}
       }
     },
@@ -32,7 +34,7 @@
       "steps": [
         "layout/analysis/correction"
       ],
-      "description": "Corrected OCR-D skewed images with anybaseocr",
+      "description": "Corrected OCR-D skewed images with anyBaseOCR",
       "parameters": {
         "threshold": {"type": "float", "default": 0.5, "description": "determines lightness threshold"},
         "bignore": {"type": "float", "default": 0.1, "description": "ignore this much of the border for threshold estimation"},
@@ -51,7 +53,7 @@
       "steps": [
         "detect-boundary/crop-area"
       ],
-      "description": "crop page boundary area with anybaseocr",
+      "description": "crop page boundary area with anyBaseOCR",
       "parameters": {
         "maxRularArea": {"type": "float", "default": 0.3, "description": "maximum area of the image to predict as a ruler"},
         "minRularArea": {"type": "float", "default": 0.01, "description": "minimum area of the image to predict as a ruler"},
@@ -64,6 +66,30 @@
         "colSeparator": {"type": "float", "default": 25.0, "description": "columns distance in case of content hold multiple columns"},
         "minArea": {"type": "float", "default": 0.05, "description": "check whether it is text area or noise area"}
       }
-    }
+    },
+    "ocrd-anybaseocr-dewarp": {
+      "executable": "ocrd-anybaseocr-dewarp",
+      "categories": ["Layout analysis"],
+      "steps": [
+        "layout/analysis/dewarp"
+      ],
+      "description": "dewarp image with anyBaseOCR",
+      "parameters": {
+        "gpu_id": {"type": "int", "default": 0, "description": "gpu id"},
+        "imgresize": {"type": "str", "default": "none", "description": "run on original size image"},
+        "resizeHeight": {"type": "int", "default": 1024, "description": "resized image height"},
+        "resizeWidth": {"type": "int", "default": 1024, "description": "resized image width"}
+      }
+    },
+    "ocrd-anybaseocr-tiseg": {
+      "executable": "ocrd-anybaseocr-tiseg",
+      "categories": ["text non-text segment"],
+      "steps": [
+        "text/non-text/segment"
+      ],
+      "description": "separate text and non-text part with anyBaseOCR",
+      "parameters": {
+      }
+    }    
   }
 }

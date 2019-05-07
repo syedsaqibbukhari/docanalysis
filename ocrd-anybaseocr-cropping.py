@@ -39,71 +39,13 @@ from pylsd import lsd
 import json
 from xml.dom import minidom
 from PIL import Image
+from ParserAnybaseocr import *
 
-parser = argparse.ArgumentParser("""
-Image crop using non-linear processing.
-    
-    python ocrd-anybaseocr-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-""")
-
-parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
-parser.add_argument('-O','--Output',default=None,help="output directory")
-parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
-parser.add_argument('-I','--Input',default=None,help="Input directory")
-parser.add_argument('-m','--mets',default=None,help="METs input file")
-parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-
-args = parser.parse_args()
-
-# This function parse particular block given as args.Input from the met.xml file
-def parseXML(fpath):
-    input_files=[]
-    xmldoc = minidom.parse(fpath)
-    nodes = xmldoc.getElementsByTagName('mets:fileGrp')
-    for attr in nodes:
-        if attr.attributes['USE'].value==args.Input:
-            childNodes = attr.getElementsByTagName('mets:FLocat')
-            for f in childNodes:
-                input_files.append(f.attributes['xlink:href'].value)
-    return input_files
-
-# This function will create a new block for this module operation and store path location 
-# for each processed image file.
-def write_to_xml(fpath):
-    xmldoc = minidom.parse(args.mets)
-    subRoot = xmldoc.createElement('mets:fileGrp')
-    subRoot.setAttribute('USE', args.Output)
-
-    for f in fpath:
-        basefile = ocrolib.allsplitext(os.path.basename(f))[0]
-        child = xmldoc.createElement('mets:file')
-        child.setAttribute('ID', 'CROP_'+basefile)
-        child.setAttribute('GROUPID', 'P_' + basefile)
-        child.setAttribute('MIMETYPE', "image/png")
-
-        subChild = xmldoc.createElement('mets:FLocat')
-        subChild.setAttribute('LOCTYPE', "URL")
-        subChild.setAttribute('xlink:href', f)
-
-        subRoot.appendChild(child)
-        child.appendChild(subChild)
-
-    xmldoc.getElementsByTagName('mets:fileSec')[0].appendChild(subRoot);
-
-    if not args.OutputMets:
-        metsFileSave = open(os.path.join(args.work, os.path.basename(args.mets)), "w")
-    else:
-        metsFileSave = open(os.path.join(args.work, args.OutputMets if args.OutputMets.endswith(".xml") else args.OutputMets+'.xml'), "w") 
-    metsFileSave.write(xmldoc.toxml()) 
-
-# This function will store cropped coordinate into a .dat  file
 def write_crop_coordinate(base, coordinate):
 	x1,y1,x2,y2 = coordinate
 	with open(base + '-frame-pf.dat', 'w') as fp:
 		fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
 
-# This function remove the rular from document image if exists
 def remove_ruler(arg, base):
 	basefile = ocrolib.allsplitext(os.path.basename(arg))[0]    
 	img = cv2.imread(arg)
@@ -179,7 +121,6 @@ def BorderLine(MaxBoundary, lines, index, flag):
 		if flag=="right":
 			lineDetectV.append((min(LastLine[0],LastLine[2]), LastLine[1], min(LastLine[0], LastLine[2]), LastLine[3]))
 
-# This function find intersect points between lines
 def get_intersect(a1, a2, b1, b2):
 	s = np.vstack([a1,a2,b1,b2])        # s for stacked
 	h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
@@ -210,7 +151,6 @@ def detect_lines(arg):
 	Vline.sort(key=lambda x:(x[0]), reverse=False)
 	return img, imgHeight, imgWidth, Hline, Vline
 
-# Find border lines
 def select_borderLine(arg, base):
 	basefile = ocrolib.allsplitext(os.path.basename(arg))[0]    
 	img, imgHeight, imgWidth, Hlines, Vlines = detect_lines(arg)
@@ -247,7 +187,6 @@ def select_borderLine(arg, base):
 
 	return [Xstart,Ystart,Xend,Yend]
 
-# filter out false textarea
 def filter_noisebox(textarea, height, width):
 	tmp=[]; st=True
 
@@ -273,7 +212,6 @@ def filter_noisebox(textarea, height, width):
 
 	return textarea
 
-# This function text textarea
 def detect_textarea(arg):
 	textarea=[]
 	noise_textarea=[]
@@ -325,7 +263,6 @@ def filter_area(textarea, binImg):
 			tmp.append(area)
 	return tmp
 
-# Merge columns in case of multi-column contains
 def marge_columns(textarea, binImg):
 	tmp=[]; marge=[]
 	height, width = binImg.shape
@@ -353,7 +290,6 @@ def marge_columns(textarea, binImg):
 
 	return tmp+marge
 
-# Crop page contain area
 def crop_area(textarea, binImg, rgb, base):
 	height, width = binImg.shape
 
@@ -401,55 +337,16 @@ def crop_area(textarea, binImg, rgb, base):
 	return textarea
 
 
-def parse_data(arguments):
-	arguments = arguments['tools']['ocrd-anybaseocr-crop']['parameters']
-
-	for key, val in arguments.items():
-		parser.add_argument('--%s' % key,
-	            type=eval(val["type"]),
-	            help=val["description"],
-	            default=val["default"])
-	return parser
-
-## Read parameter values from json file
-def get_parameters():
-    if args.parameter:
-        if not os.path.exists(args.parameter):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(args.parameter) as json_file:
-                json_data = json.load(json_file)
-    else:
-        parameter_path = os.path.dirname(os.path.realpath(__file__))
-        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')) as json_file:
-                json_data = json.load(json_file)
-    parser = parse_data(json_data)
-    parameters = parser.parse_args()
-    return parameters
-
-
 if __name__ == "__main__":
-	args = get_parameters()
+ 	myparser = ParserAnybaseocr()
+ 	args = myparser.get_parameters('ocrd-anybaseocr-crop')
 
-	# mendatory parameter check
-	if not args.mets or not args.Input or not args.Output or not args.work:
-	    parser.print_help()
-	    print("Example: python ocrd-anybaseocr-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-	    sys.exit(0)
 
-	if args.work:
-	    if not os.path.exists(args.work):
-	        os.mkdir(args.work)
-
-	files = parseXML(args.mets)
+	files = myparser.parseXML()
 	fname=[]
 	for i, f in enumerate(files):
-		print "Process file: ", str(f) , i+1
+		myparser.print_info("Process file: %s" % str(f))
+		#print "Process file: ", str(f) , i+1
 		base,_ = ocrolib.allsplitext(str(f))
 		binImg = ocrolib.read_image_binary(str(f))
 
@@ -474,4 +371,4 @@ if __name__ == "__main__":
 			select_borderLine(fpath, base)
 
 		fname.append(base + '.pf.png')
-	write_to_xml(fname)
+	myparser.write_to_xml(fname, 'CROP_')

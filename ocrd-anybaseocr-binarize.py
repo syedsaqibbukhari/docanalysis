@@ -46,71 +46,14 @@ import multiprocessing
 import ocrolib
 import json
 from pprint import pprint
-from xml.dom import minidom
+from ParserAnybaseocr import *
 #import xml.etree.ElementTree
 #from lxml import etree
 
 
-parser = argparse.ArgumentParser("""
-Image binarization using non-linear processing.
-	
-	python ocrd-anybaseocr-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-This is a compute-intensive binarization method that works on degraded
-and historical book pages.
-""")
-
-parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
-parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
-parser.add_argument('-I','--Input',default=None,help="Input directory")
-parser.add_argument('-O','--Output',default=None,help="output directory")
-parser.add_argument('-m','--mets',default=None,help="METs input file")
-parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-parser.add_argument('-n','--nocheck',action="store_true", help="disable error checking on inputs")
-parser.add_argument('--show', action='store_true', help='display debug result')
-parser.add_argument('-gr','--gray',action='store_true',help='force grayscale processing even if image seems binary')
-args = parser.parse_args()
-
-def parseXML(fpath):
-    input_files=[]
-    xmldoc = minidom.parse(fpath)
-    nodes = xmldoc.getElementsByTagName('mets:fileGrp')
-    for attr in nodes:
-        if attr.attributes['USE'].value==args.Input:
-            childNodes = attr.getElementsByTagName('mets:FLocat')
-            for f in childNodes:
-                input_files.append(f.attributes['xlink:href'].value)
-    return input_files
-
-def write_to_xml(fpath):
-    xmldoc = minidom.parse(args.mets)
-    subRoot = xmldoc.createElement('mets:fileGrp')
-    subRoot.setAttribute('USE', args.Output)
-
-    for f in fpath:
-        #basefile = os.path.splitext(os.path.splitext(os.path.basename(f))[0])[0]
-        basefile = ocrolib.allsplitext(os.path.basename(f))[0]
-        child = xmldoc.createElement('mets:file')
-        child.setAttribute('ID', 'BIN_'+basefile)
-        child.setAttribute('GROUPID', 'P_' + basefile)
-        child.setAttribute('MIMETYPE', "image/png")
-
-        subChild = xmldoc.createElement('mets:FLocat')
-        subChild.setAttribute('LOCTYPE', "URL")
-        subChild.setAttribute('xlink:href', f)
-
-        #xmldoc.getElementsByTagName('mets:file')[0].appendChild(subChild);
-        subRoot.appendChild(child)
-        child.appendChild(subChild)
-
-    #subRoot.appendChild(child)
-    xmldoc.getElementsByTagName('mets:fileSec')[0].appendChild(subRoot);
-    
-    if not args.OutputMets:
-        metsFileSave = open(os.path.join(args.work, os.path.basename(args.mets)), "w")
-    else:
-        metsFileSave = open(os.path.join(args.work, args.OutputMets if args.OutputMets.endswith(".xml") else args.OutputMets+'.xml'), "w")
-    metsFileSave.write(xmldoc.toxml()) 
+#parser.add_argument('-n','--nocheck',action="store_true", help="disable error checking on inputs")
+#parser.add_argument('--show', action='store_true', help='display debug result')
+#parser.add_argument('-gr','--gray',action='store_true',help='force grayscale processing even if image seems binary')
 
 def print_info(*objs):
     print("INFO: ", *objs, file=sys.stdout)
@@ -204,7 +147,7 @@ def process1(job):
     #print_info("%s lo-hi (%.2f %.2f) angle %4.1f %s" % (fname, lo, hi, angle, comment))
     print_info("%s lo-hi (%.2f %.2f) %s" % (fname, lo, hi, comment))
     if args.parallel<2: print_info("writing")
-    if args.debug>0 or args.show: clf(); gray();imshow(bin); ginput(1,max(0.1,args.debug))
+    if args.debug>0: clf(); gray();imshow(bin); ginput(1,max(0.1,args.debug))
     base,_ = ocrolib.allsplitext(fname)
     ocrolib.write_image_binary(base+".bin.png",bin)
     ocrolib.write_image_gray(base+".nrm.png",flat)
@@ -212,56 +155,17 @@ def process1(job):
     #write_to_xml(base+".bin.png")
     return base+".bin.png"
 
-def parse_data(arguments):
-	arguments = arguments['tools']['ocrd-anybaseocr-bin']['parameters']
-
-	for key, val in arguments.items():
-		parser.add_argument('--%s' % key,
-	            type=eval(val["type"]),
-	            help=val["description"],
-	            default=val["default"])
-	return parser
-
-## Read parameter values from json file
-def get_parameters():
-    if args.parameter:
-        if not os.path.exists(args.parameter):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(args.parameter) as json_file:
-                json_data = json.load(json_file)
-    else:
-        parameter_path = os.path.dirname(os.path.realpath(__file__))
-        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')) as json_file:
-                json_data = json.load(json_file)
-    parser = parse_data(json_data)
-    parameters = parser.parse_args()
-    return parameters
-
 
 if __name__ == "__main__":
-	args = get_parameters()
+    myparser = ParserAnybaseocr()
+    args = myparser.get_parameters('ocrd-anybaseocr-bin')
 
-	# mendatory parameter check
-	if not args.mets or not args.Input or not args.Output or not args.work:
-	    parser.print_help()
-	    print("Example: python ocrd-anybaseocr-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-	    sys.exit(0)
+    if args.debug>0: args.parallel = 0
+    
+    files = myparser.parseXML()
 
+    fname=[]
+    for i, f in enumerate(files):
+        fname.append(process1((str(f),i+1)))
 
-	if args.debug>0 or args.show: args.parallel = 0
-
-	if args.work:
-	    if not os.path.exists(args.work):
-	        os.mkdir(args.work)
-
-	files = parseXML(args.mets)
-	fname=[]
-	for i, f in enumerate(files):
-	    fname.append(process1((str(f),i+1)))
-	write_to_xml(fname)
+    myparser.write_to_xml(fname, 'BIN_')

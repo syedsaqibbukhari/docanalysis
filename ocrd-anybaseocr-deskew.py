@@ -50,24 +50,8 @@ from pylab import amin, amax, linspace, mean, var, plot, ginput, ones, clip, ims
 from scipy.ndimage import filters, interpolation, morphology
 from scipy import stats
 import ocrolib
-from utils import parseXML, write_to_xml, print_info
-
-parser = argparse.ArgumentParser("""
-Image deskewing using non-linear processing.
-    
-    python ocrd-anybaseocr-deskew.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-This is a compute-intensive deskew method that works on degraded and historical book pages.
-""")
-
-parser.add_argument('-p','--parameter',type=str,help="Parameter file location")
-parser.add_argument('-O','--Output',default=None,help="output directory")
-parser.add_argument('-w','--work',type=str,help="Working directory location", default=".")
-parser.add_argument('-I','--Input',default=None,help="Input directory")
-parser.add_argument('-m','--mets',default=None,help="METs input file")
-parser.add_argument('-o','--OutputMets',default=None,help="METs output file")
-
-args = parser.parse_args()
+#from utils import parseXML, write_to_xml, print_info
+from ParserAnybaseocr import *
 
 class OcrdAnybaseocrDeskewer():
 	def __init__(self, args):
@@ -92,13 +76,13 @@ class OcrdAnybaseocrDeskewer():
 		base, _ = ocrolib.allsplitext(fpath)
 		basefile = ocrolib.allsplitext(os.path.basename(fpath))[0]
 		if args.parallel < 2:
-			print_info("=== %s %-3d" % (fpath, job))
+			myparser.print_info("=== %s %-3d" % (fpath, job))
 		raw = ocrolib.read_image_gray(fpath)
 		flat = raw
 		# estimate skew angle and rotate
 		if args.maxskew > 0:
 			if args.parallel < 2:
-				print_info("estimating skew angle")
+				myparser.print_info("estimating skew angle")
 			d0, d1 = flat.shape
 			o0, o1 = int(args.bignore*d0), int(args.bignore*d1)
 			flat = amax(flat)-flat
@@ -114,7 +98,7 @@ class OcrdAnybaseocrDeskewer():
 
 		# estimate low and high thresholds
 		if args.parallel < 2:
-			print_info("estimating thresholds")
+			myparser.print_info("estimating thresholds")
 		d0, d1 = flat.shape
 		o0, o1 = int(args.bignore*d0), int(args.bignore*d1)
 		est = flat[o0:d0-o0, o1:d1-o1]
@@ -136,7 +120,7 @@ class OcrdAnybaseocrDeskewer():
 		hi = stats.scoreatpercentile(est.ravel(), args.hi)
 		# rescale the image to get the gray scale image
 		if args.parallel < 2:
-			print_info("rescaling")
+			myparser.print_info("rescaling")
 		flat -= lo
 		flat /= (hi-lo)
 		flat = clip(flat, 0, 1)
@@ -146,56 +130,20 @@ class OcrdAnybaseocrDeskewer():
 		deskewed = 1*(flat > args.threshold)
 
 		# output the normalized grayscale and the thresholded images
-		print_info("%s lo-hi (%.2f %.2f) angle %4.1f" % (basefile, lo, hi, angle))
+		myparser.print_info("%s lo-hi (%.2f %.2f) angle %4.1f" % (basefile, lo, hi, angle))
 		if args.parallel < 2:
-			print_info("writing")
+			myparser.print_info("writing")
 		ocrolib.write_image_binary(base+".ds.png", deskewed)
 	    	return base+".ds.png"			
 
-def get_parameters():
-    if args.parameter:
-        if not os.path.exists(args.parameter):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(args.parameter) as json_file:
-                json_data = json.load(json_file)
-    else:
-        parameter_path = os.path.dirname(os.path.realpath(__file__))
-        if not os.path.exists(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')):
-            print("Error : Parameter file does not exists.")
-            sys.exit(0)
-        else:
-            with open(os.path.join(parameter_path, 'ocrd-anybaseocr-parameter.json')) as json_file:
-                json_data = json.load(json_file)
-    parser = parse_data(json_data)
-    parameters = parser.parse_args()
-    return parameters
-
-def parse_data(arguments):
-    arguments = arguments['tools']['ocrd-anybaseocr-deskew']['parameters']
-
-    for key, val in arguments.items():
-        parser.add_argument('--%s' % key,
-                type=eval(val["type"]),
-                help=val["description"],
-                default=val["default"])
-    return parser
-
 if __name__ == "__main__":
- 	args = get_parameters()
- 	# mendatory parameter check
- 	if not args.mets or not args.Input or not args.Output or not args.work:
-		parser.print_help()
-		print("Example: ocrd-anybaseocr-deskew -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-		sys.exit(0)
+ 	myparser = ParserAnybaseocr()
+ 	args = myparser.get_parameters('ocrd-anybaseocr-deskew')
 
-	if args.work:
-		if not os.path.exists(args.work):
-			os.mkdir(args.work)
 	deskewer = OcrdAnybaseocrDeskewer(args)
-	files = parseXML(args.mets, args.Input)
-	fnames = []
-	for i, fname in enumerate(files):
-		fnames.append(deskewer.deskew(str(fname), i+1))
-	write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)
+	files = myparser.parseXML()
+	fname = []
+	for i, f in enumerate(files):
+		fname.append(deskewer.deskew(str(f), i+1))
+
+	myparser.write_to_xml(fname, 'DESKEW_')
