@@ -6,7 +6,8 @@ Author: Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib
 Responsible: Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib
 Contact Email: Saqib.Bukhari@dfki.de, Mohammad_mohsin.reza@dfki.de, Md_ajraf.rakib@dfki.de
 Note: 
-1. this work has been done in DFKI, Kaiserslautern, Germany.
+1. this work has been done in DFKI, Kaiserslautern, Germany, as a part of the DFG research project "Scalable Methods of Text and Structure Recognition for the Full-Text Digitization of Historical Prints" Part 1.B: Image Optimization"
+Link: http://gepris.dfg.de/gepris/projekt/394343055?language=en
 2. The parameters values are read from ocrd-anybaseocr-parameter.json file. The values can be changed in that file.
 3. The command line IO usage is based on "OCR-D" project guidelines (https://ocr-d.github.io/).
 4. The sequence of operations is: binarization, deskewing, cropping and dewarping (or can also be: binarization, dewarping, deskewing, and cropping; depends upon use-case).
