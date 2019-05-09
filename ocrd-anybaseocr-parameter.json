@@ -76,7 +76,7 @@
       "description": "dewarp image with anyBaseOCR",
       "parameters": {
         "gpu_id": {"type": "int", "default": 0, "description": "gpu id"},
-        "imgresize": {"type": "str", "default": "none", "description": "run on original size image"},
+        "imgresize": {"type": "str", "default": "resize_and_crop", "description": "run on original size image"},
         "resizeHeight": {"type": "int", "default": 1024, "description": "resized image height"},
         "resizeWidth": {"type": "int", "default": 1024, "description": "resized image width"}
       }
