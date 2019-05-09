@@ -83,10 +83,10 @@ if __name__ == "__main__":
 	fname=[]
 
 	for i, f in enumerate(files):
-		base = f.split('.')[0]
-		img_dir = os.path.dirname(f)
+		base = str(f).split('.')[0]
+		img_dir = os.path.dirname(str(f))
 		os.system("mkdir -p %s" % img_tmp_dir)
-		os.system("cp %s %s" % (f, os.path.join(img_tmp_dir, os.path.basename(f))))
+		os.system("cp %s %s" % (str(f), os.path.join(img_tmp_dir, os.path.basename(str(f)))))
 		fname.append(base + '.dw.png')
 	dewarping(img_tmp_dir, img_dir)
 	os.system("rm -r %s" % img_tmp_dir)
