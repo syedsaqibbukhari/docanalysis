@@ -116,6 +116,13 @@ class ParserAnybaseocr:
 	        metsFileSave = open(os.path.join(self.work_dir, self.out_met_path if self.out_met_path.endswith(".xml") else self.out_met_path+'.xml'), "w")
 	    metsFileSave.write(xmldoc.toxml())
 
+	def pageXML_deskew():
+		pass
+	
+	def pageXML_cropping():
+		pass		
+
+
 	    
 	def print_info(self, msg):
 	    print("INFO: %s" % msg)
