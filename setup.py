@@ -1,22 +1,27 @@
-from __future__ import print_function
-
-import sys
-import glob
-import os.path
-from distutils.core import setup
-
-
-ocrolib = [c for c in glob.glob("ocrolib/*")]
-scripts = [c for c in glob.glob("ocrd-anybaseocr-*")]
+# -*- coding: utf-8 -*-
+from setuptools import setup
 
 setup(
     name = 'ocrd-anybaseocr',
     version = 'v0.0.1',
     author = "Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib",
     author_email = "Saqib.Bukhari@dfki.de, Mohammad_mohsin.reza@dfki.de, Md_ajraf.rakib@dfki.de",
+
     url = "https://github.com/syedsaqibbukhari/docanalysis",
-    license = "Apache License 2.0",
-    description = "Binarize, Deskew, Cropping OCR-D historical document images",
-    packages = ["ocrolib"],
-    scripts = scripts,
+
+    license='Apache License 2.0',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    install_requires=open('requirements.txt').read().split('\n'),
+    packages=['ocrd_anybaseocr'],
+    package_data={
+        '': ['*.json']
+    },
+    entry_points={
+        'console_scripts': [
+            'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.binarize:main',
+            'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.cropping:main',
+            'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.deskew:main',
+        ]
+    },
 )

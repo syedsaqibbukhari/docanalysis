@@ -1,0 +1,11 @@
+{
+  "bignore": 0.1,
+  "threshold": 0.5,
+  "escale": 1.0,
+  "lo": 5,
+  "hi": 90,
+  "maxskew": 2.0,
+  "skewsteps": 8,
+  "debug": 0.0,
+  "parallel": 0
+}
