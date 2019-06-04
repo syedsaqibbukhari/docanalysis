@@ -63,7 +63,7 @@
       "executable": "ocrd-anybaseocr-dewarp",
       "description": "dewarp image with anyBaseOCR",
       "categories": ["Image preprocessing"],
-      "steps": ["preprozessing/dewarp"],
+      "steps": ["preprocessing/dewarp"],
       "parameters": {
         "imgresize": 	{"type": "string",                      "default": "resize_and_crop", "description": "run on original size image"},
         "gpu_id": 	{"type": "number", "format": "integer", "default": 0,    "description": "gpu id"},
