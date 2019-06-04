@@ -209,7 +209,7 @@ def main():
     # mandatory parameter check
     if not args.mets or not args.Input or not args.Output or not args.work:
         parser.print_help()
-        print("Example: python ocrd-anyBaseOCR-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
+        print("Example: ocrd_anyBaseOCR_binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
         sys.exit(0)
 
     if args.work:
