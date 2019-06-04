@@ -8,3 +8,10 @@ debug*
 *.egg-info
 repo
 tests/assets
+
+# Packages
+dist
+build
+lib
+lib64
+

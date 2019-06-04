@@ -33,8 +33,6 @@
 import sys, os, argparse
 import numpy
 from numpy import *
-#from numpy import linalg, var, random, take, transpose, dot
-#from numpy import ones, zeros, array, where, shape, arange, sum
 from scipy.ndimage import gaussian_filter1d
 import copy
 import pylab
@@ -49,7 +47,6 @@ import math
 from math import ceil, e, sqrt
 from scipy import median
 from re import split
-#from dewarpinglibrary.dewarp import *
 import time
 from time import clock,time
 import cv2

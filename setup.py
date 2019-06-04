@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = 'ocrd-anybaseocr',
@@ -13,15 +13,15 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     install_requires=open('requirements.txt').read().split('\n'),
-    packages=['ocrd_anybaseocr'],
+    packages=find_packages(exclude=["work_dir","models","pix2pixHD_modified"]),
     package_data={
         '': ['*.json']
     },
     entry_points={
         'console_scripts': [
-            'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.binarize:main',
-            'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.cropping:main',
-            'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.deskew:main',
+            'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.ocrd_anybaseocr_binarize:main',
+            'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.ocrd_anybaseocr_cropping:main',
+            'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.ocrd_anybaseocr_deskew:main',
         ]
     },
 )
