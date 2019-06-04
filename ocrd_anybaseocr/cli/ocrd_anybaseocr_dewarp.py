@@ -64,6 +64,7 @@ def main():
 	dewarper = OcrdAnybaseocrDewarper(param)
 	files = parseXML(args.mets, args.Input)
 	fnames=[]
+	img_tmp_dir = "work_dir/test_A"
 
 	for i, fname in enumerate(files):
 		base = str(fname).split('.')[0]
@@ -73,6 +74,4 @@ def main():
 		fnames.append(base + '.dw.png')
 	dewarper.dewarping(img_tmp_dir, img_dir)
 	os.system("rm -r %s" % img_tmp_dir)
-	write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)
-
-	
+	write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)	

@@ -56,7 +56,7 @@ class OcrdAnybaseocrCropper():
     def remove_rular(self, arg, base):
         img = cv2.imread(arg)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        _, contours, _ = cv2.findContours(
+        contours, _ = cv2.findContours(
             gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         height, width = gray.shape
@@ -271,7 +271,7 @@ class OcrdAnybaseocrCropper():
         kernel = cv2.getStructuringElement(
             cv2.MORPH_RECT, (10, 1))  # for historical docs
         connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
-        _, contours, _ = cv2.findContours(
+        contours, _ = cv2.findContours(
             connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
         mask = np.zeros(bw.shape, dtype=np.uint8)

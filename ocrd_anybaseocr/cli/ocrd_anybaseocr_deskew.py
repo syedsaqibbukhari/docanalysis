@@ -170,7 +170,7 @@ def main():
         with open(args.parameter, 'r') as param_file:
             param = json.loads(param_file.read())
     param = parse_params_with_defaults(param, OCRD_TOOL['tools']['ocrd-anybaseocr-deskew']['parameters'])
-    print("%s" % param)
+    #print("%s" % param)
     # End to read parameters
 
     # mendatory parameter check
