@@ -52,6 +52,7 @@ from pylab import amin, amax, linspace, mean, var, plot, ginput, ones, clip, ims
 from scipy.ndimage import filters, interpolation, morphology
 from scipy import stats
 import ocrolib
+import xml.etree.ElementTree as ET
 from ..utils import parseXML, write_to_xml, print_info, parse_params_with_defaults
 from ..constants import OCRD_TOOL
 
@@ -73,6 +74,32 @@ class OcrdAnybaseocrDeskewer():
             ginput(1, param['debug'])
         _, a = max(estimates)
         return a
+
+    def write_angles_to_pageXML(self, image, angles):        
+        if os.path.isfile(image + "_deskew_angles.xml"):
+            doc = ET.parse(image + "_deskew_angles.xml")
+            root = doc.getroot()
+            skew_element = ET.SubElement(root, 'skewing')
+            image_name = ET.SubElement(skew_element, 'Image')
+            image_name.set('name', image)
+            orientation = ET.SubElement(skew_element, 'Orientation')
+            orientation.set('angle',str(angles))
+            tree = ET.ElementTree(root)
+            tree.write(image + "_deskew_angles.xml")
+                
+        else:        
+            # create the file structure    
+            root = ET.Element('complexType')
+            root.set('name','PrintSpaceType')            
+            skew_element = ET.SubElement(root, 'skewing')
+            image_name = ET.SubElement(skew_element, 'Image')  
+            image_name.set('name',str(image))  
+            orientation = ET.SubElement(skew_element, 'Orientation')  
+            orientation.set('angle',str(angles))
+            # create a new XML file with the results
+            mydata = ET.tostring(root, method='xml',encoding="unicode")  
+            myfile = open(image + "_deskew_angles.xml", "w")  
+            myfile.write(mydata)
 
 
     def run(self, fpath, job):
@@ -102,6 +129,8 @@ class OcrdAnybaseocrDeskewer():
         else:
             angle = 0
 
+        
+        self.write_angles_to_pageXML(base,angle)
         # estimate low and high thresholds
         if param['parallel'] < 2:
             print_info("estimating thresholds")
