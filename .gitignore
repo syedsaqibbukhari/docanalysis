@@ -14,4 +14,4 @@ dist
 build
 lib
 lib64
-
+**/ocrd_anybaseocr/samples

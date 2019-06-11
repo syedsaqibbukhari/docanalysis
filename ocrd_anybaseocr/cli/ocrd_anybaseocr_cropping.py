@@ -38,6 +38,7 @@ from pylsd.lsd import lsd
 import ocrolib
 import cv2
 from PIL import Image
+import xml.etree.ElementTree as ET
 
 from ..utils import parseXML, write_to_xml, parse_params_with_defaults
 from ..constants import OCRD_TOOL
@@ -51,6 +52,33 @@ class OcrdAnybaseocrCropper():
         x1, y1, x2, y2 = coordinate
         with open(base + '-frame-pf.dat', 'w') as fp:
             fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
+
+    def write_crop_coordinate_to_pageXML(self, base, coordinate):        
+        x1,y1,x2,y2 = coordinate
+        coords = (x1,y1), (x1,(y2-y1)), ((x2-x1),y1), ((x2-x1),(y2-y1))     
+        points= " ".join("%s,%s" %i for i in coords)
+        #depends how the imagename has to be saved        
+        if os.path.isfile(base + "_crop_coords.xml"):
+            doc = ET.parse(base + "_crop_coords.xml")
+            root = doc.getroot()    
+            crop_element = ET.SubElement(root, 'cropping')
+            image_name = ET.SubElement(crop_element, 'Image')
+            image_name.set('name', base)    
+            image_coordinates = ET.SubElement(crop_element,'Coords')
+            image_coordinates.set('points',points)
+            tree = ET.ElementTree(root)     
+            tree.write(base + "_crop_coords.xml")
+        else:
+            root = ET.Element('complexType')
+            root.set('name','PrintSpaceType')
+            crop_element = ET.SubElement(root, 'cropping')
+            image_name = ET.SubElement(crop_element, 'Image')
+            image_name.set('name', base)
+            image_coordinates = ET.SubElement(crop_element,'Coords')
+            image_coordinates.set('points',points)
+            mydata = ET.tostring(root, method='xml',encoding="unicode")            
+            myfile = open(base + "_crop_coords.xml", "w")
+            myfile.write(mydata)    
 
 
     def remove_rular(self, arg, base):
@@ -300,6 +328,7 @@ class OcrdAnybaseocrCropper():
         img2 = img.crop((x1, y1, x2, y2))
         img2.save(base + '.pf.png')
         self.write_crop_coordinate(base, textarea)
+        self.write_crop_coordinate_to_pageXML(base, textarea)
 
 
     def filter_area(self, textarea, binImg):
