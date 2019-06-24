@@ -53,20 +53,20 @@ class OcrdAnybaseocrCropper():
         with open(base + '-frame-pf.dat', 'w') as fp:
             fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
 
-    def write_crop_coordinate_to_pageXML(self, base, coordinate):        
+    def write_crop_coordinate_to_pageXML(self, base, coordinate):
         x1,y1,x2,y2 = coordinate
-        coords = (x1,y1), (x1,(y2-y1)), ((x2-x1),y1), ((x2-x1),(y2-y1))     
+        coords = (x1,y1), (x1,(y2-y1)), ((x2-x1),y1), ((x2-x1),(y2-y1))
         points= " ".join("%s,%s" %i for i in coords)
-        #depends how the imagename has to be saved        
+        #depends how the imagename has to be saved
         if os.path.isfile(base + "_crop_coords.xml"):
             doc = ET.parse(base + "_crop_coords.xml")
-            root = doc.getroot()    
+            root = doc.getroot()
             crop_element = ET.SubElement(root, 'cropping')
             image_name = ET.SubElement(crop_element, 'Image')
-            image_name.set('name', base)    
+            image_name.set('name', base)
             image_coordinates = ET.SubElement(crop_element,'Coords')
             image_coordinates.set('points',points)
-            tree = ET.ElementTree(root)     
+            tree = ET.ElementTree(root)
             tree.write(base + "_crop_coords.xml")
         else:
             root = ET.Element('complexType')
@@ -74,11 +74,11 @@ class OcrdAnybaseocrCropper():
             crop_element = ET.SubElement(root, 'cropping')
             image_name = ET.SubElement(crop_element, 'Image')
             image_name.set('name', base)
-            image_coordinates = ET.SubElement(crop_element,'Coords')
-            image_coordinates.set('points',points)
-            mydata = ET.tostring(root, method='xml',encoding="unicode")            
+            image_coordinates = ET.SubElement(crop_element, 'Coords')
+            image_coordinates.set('points', points)
+            mydata = ET.tostring(root, method='xml', encoding="unicode")
             myfile = open(base + "_crop_coords.xml", "w")
-            myfile.write(mydata)    
+            myfile.write(mydata)
 
 
     def remove_rular(self, arg, base):
