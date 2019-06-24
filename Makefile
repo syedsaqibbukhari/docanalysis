@@ -28,7 +28,7 @@ help:
 model: ocrd_anybaseocr/models/latest_net_G.pth
 
 ocrd_anybaseocr/models/latest_net_G.pth:
-	wget -O"$@" "https://cloud.dfki.de/owncloud/index.php/s/GZ6zZtyF6yDPbwm"
+	wget -O"$@" "https://cloud.dfki.de/owncloud/index.php/s/3zKza5sRfQB3ygy/download"
 
 # Clone OCR-D/assets to ./repo/assets
 repo/assets:

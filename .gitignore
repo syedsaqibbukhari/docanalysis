@@ -16,3 +16,4 @@ lib
 lib64
 
 **/ocrd_anybaseocr/samples
+ocrd_anybaseocr/models/latest_net_G.pth
