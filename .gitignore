@@ -14,6 +14,8 @@ dist
 build
 lib
 lib64
+work_dir
 
 **/ocrd_anybaseocr/samples
-ocrd_anybaseocr/models/latest_net_G.pth
+**/ocrd_anybaseocr/work_dir
+**/ocrd_anybaseocr/models/latest_net_G.pth
