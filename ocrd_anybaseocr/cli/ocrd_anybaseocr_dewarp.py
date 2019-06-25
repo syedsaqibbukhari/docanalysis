@@ -11,10 +11,9 @@ class OcrdAnybaseocrDewarper():
 	def __init__(self, param):
 		self.param = param		
 	
-	def dewarping(self, tmp, dest):
-		os.system("python pix2pixHD/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" % (os.path.dirname(tmp), dest, self.param['gpu_id'], self.param['resizeHeight'], self.param['resizeWidth'], self.param['imgresize']))
+	def dewarping(self, tmp, dest, path):
+		os.system("python" + pix2pixHD_path + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" % (os.path.dirname(tmp), dest, self.param['gpu_id'], self.param['resizeHeight'], self.param['resizeWidth'], self.param['imgresize']))
 		
-
 
 def main():
 	parser = argparse.ArgumentParser("""
@@ -33,6 +32,7 @@ def main():
 	parser.add_argument('-m', '--mets', default=None, help="METs input file")
 	parser.add_argument('-o', '--OutputMets', default=None, help="METs output file")
 	parser.add_argument('-g', '--group', default=None, help="METs image group id")
+	parser.add_argument('--pix2pixHD', default=None, help="path to the local pix2pixHD installation")
 	args = parser.parse_args()
 
 	# Read parameter values from json file
@@ -72,6 +72,6 @@ def main():
 		os.system("mkdir -p %s" % img_tmp_dir)
 		os.system("cp %s %s" % (str(fname), os.path.join(img_tmp_dir, os.path.basename(str(fname)))))
 		fnames.append(base + '.dw.png')
-	dewarper.dewarping(img_tmp_dir, img_dir)
+	dewarper.dewarping(img_tmp_dir, img_dir, args.pix2pixHD)
 	os.system("rm -r %s" % img_tmp_dir)
 	write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)	
