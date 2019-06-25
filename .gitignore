@@ -18,3 +18,4 @@ work_dir
 
 **/ocrd_anybaseocr/samples
 **/ocrd_anybaseocr/work_dir
+**/ocrd_anybaseocr/models/latest_net_G.pth

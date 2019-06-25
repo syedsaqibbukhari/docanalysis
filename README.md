@@ -1,20 +1,20 @@
 # docanalysis
 
+[![CircleCI](https://circleci.com/gh/syedsaqibbukhari/docanalysis.svg?style=svg)](https://circleci.com/gh/syedsaqibbukhari/docanalysis)
+
 > Tools for preprocessing scanned images for OCR
 
-#Installing
+# Installing
 
 To install anyBaseOCR dependencies system-wide:
 
-    $ sudo pip install -r requirements.txt
-    $ sudo python setup.py install
+    $ sudo pip install .
 
 Alternatively, dependencies can be installed into a Virtual Environment:
 
     $ virtualenv venv
     $ source venv/bin/activate
-    $ pip install -r requirements.txt
-    $ python setup.py install
+    $ pip install -e .
 
 ## Tools included
 
