@@ -17,3 +17,4 @@ lib64
 work_dir
 
 **/ocrd_anybaseocr/samples
+**/ocrd_anybaseocr/work_dir
