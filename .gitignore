@@ -14,5 +14,6 @@ dist
 build
 lib
 lib64
+work_dir
 
 **/ocrd_anybaseocr/samples
