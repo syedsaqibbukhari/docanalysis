@@ -45,7 +45,7 @@ from ..constants import OCRD_TOOL
 
 from ocrd import Processor
 from ocrd.resolver import Resolver
-from ocrd_utils import getLogger, concat_padded, points_from_xywh, MIMETYPE_PAGE
+from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
 	CoordsType,
@@ -482,7 +482,7 @@ class OcrdAnybaseocrCropper(Processor):
 			)                
 
 #            return '%s.pf.png' % base
-
+'''
 def main():
 	parser = argparse.ArgumentParser("""
 	Image crop using non-linear processing.
@@ -527,6 +527,7 @@ def main():
 #		otherrole=otherrole
 	)
 	workspace.save_mets()
+'''	
 '''
 	# mendatory parameter check
 	if not args.mets or not args.Input or not args.Output or not args.work:
