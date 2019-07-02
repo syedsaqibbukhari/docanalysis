@@ -38,14 +38,14 @@ from pylsd.lsd import lsd
 import ocrolib
 import cv2
 from PIL import Image
-import xml.etree.ElementTree as ET
+
 
 
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
 from ocrd.resolver import Resolver
-from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
+from ocrd_utils import getLogger, concat_padded
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
 	CoordsType,
@@ -193,7 +193,7 @@ class OcrdAnybaseocrCropper(Processor):
 		return img, imgHeight, imgWidth, Hline, Vline
 
 
-	def select_borderLine(self, arg, lineDetectH, lineDetectV):
+	def select_borderLine(self, arg, lineDetectH, lineDetectV, base):
 		_, imgHeight, imgWidth, Hlines, Vlines = self.detect_lines(arg)
 
 		# top side
@@ -238,7 +238,7 @@ class OcrdAnybaseocrCropper(Processor):
 			Xend = 10
 		if Yend < 0:
 			Yend = 15
-		#self.save_pf(base, [Xstart, Ystart, Xend, Yend])
+		self.save_pf(base, [Xstart, Ystart, Xend, Yend])
 
 		return [Xstart, Ystart, Xend, Yend]
 
@@ -424,9 +424,9 @@ class OcrdAnybaseocrCropper(Processor):
 			self.parameter['colSeparator'] = int(width * self.parameter['colSeparator'])
 
 			if len(textarea) > 1:
-				textarea = self.crop_area(textarea, binImg, rgb,base)
+				textarea = self.crop_area(textarea, binImg, rgb, base)
 				if len(textarea) == 0:
-					self.select_borderLine(fpath, lineDetectH, lineDetectV)
+					self.select_borderLine(fpath, lineDetectH, lineDetectV, base)
 			elif len(textarea) == 1 and (height*width*0.5 < (abs(textarea[0][2]-textarea[0][0]) * abs(textarea[0][3]-textarea[0][1]))):
 				x1, y1, x2, y2 = textarea[0]
 				x1 = x1-20 if x1 > 20 else 0
@@ -436,7 +436,7 @@ class OcrdAnybaseocrCropper(Processor):
 
 				self.save_pf(base, [x1, y1, x2, y2])
 			else:
-				self.select_borderLine(fpath, lineDetectH, lineDetectV)
+				self.select_borderLine(fpath, lineDetectH, lineDetectV, base)
 			
 			min_x ,min_y, max_x, max_y = textarea[0]
 			brd = BorderType(Coords=CoordsType("%i,%i %i,%i %i,%i %i,%i" % (min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
