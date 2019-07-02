@@ -66,35 +66,7 @@ class OcrdAnybaseocrCropper(Processor):
 	def write_crop_coordinate(self, base, coordinate):
 		x1, y1, x2, y2 = coordinate
 		with open(base + '-frame-pf.dat', 'w') as fp:
-			fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
-
-	def write_crop_coordinate_to_pageXML(self, base, coordinate):        
-		x1,y1,x2,y2 = coordinate
-		coords = (x1,y1), (x1,(y2-y1)), ((x2-x1),y1), ((x2-x1),(y2-y1))     
-		points= " ".join("%s,%s" %i for i in coords)
-		#depends how the imagename has to be saved        
-		if os.path.isfile(base + "_crop_coords.xml"):
-			doc = ET.parse(base + "_crop_coords.xml")
-			root = doc.getroot()    
-			crop_element = ET.SubElement(root, 'cropping')
-			image_name = ET.SubElement(crop_element, 'Image')
-			image_name.set('name', base)    
-			image_coordinates = ET.SubElement(crop_element,'Coords')
-			image_coordinates.set('points',points)
-			tree = ET.ElementTree(root)     
-			tree.write(base + "_crop_coords.xml")
-		else:
-			root = ET.Element('complexType')
-			root.set('name','PrintSpaceType')
-			crop_element = ET.SubElement(root, 'cropping')
-			image_name = ET.SubElement(crop_element, 'Image')
-			image_name.set('name', base)
-			image_coordinates = ET.SubElement(crop_element,'Coords')
-			image_coordinates.set('points',points)
-			mydata = ET.tostring(root, method='xml',encoding="unicode")            
-			myfile = open(base + "_crop_coords.xml", "w")
-			myfile.write(mydata)    
-
+			fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))	
 
 	def remove_rular(self, arg):
 		base = arg.split(".")[0]
@@ -344,7 +316,7 @@ class OcrdAnybaseocrCropper(Processor):
 		img2 = img.crop((x1, y1, x2, y2))
 		img2.save(base + '.pf.png')
 		self.write_crop_coordinate(base, textarea)
-		self.write_crop_coordinate_to_pageXML(base, textarea)
+		
 
 
 	def filter_area(self, textarea, binImg):
@@ -386,7 +358,7 @@ class OcrdAnybaseocrCropper(Processor):
 		return tmp+marge
 
 
-	def crop_area(self, textarea, binImg, rgb):
+	def crop_area(self, textarea, binImg, rgb, base):
 		height, width = binImg.shape
 
 		textarea = np.unique(textarea, axis=0)
@@ -432,7 +404,7 @@ class OcrdAnybaseocrCropper(Processor):
 			y1 = y1-40 if y1 > 40 else 0
 			y2 = y2+40 if y2 < height-40 else height
 
-#            self.save_pf(base, [x1, y1, x2, y2])
+			self.save_pf(base, [x1, y1, x2, y2])
 
 		return textarea
 
@@ -443,7 +415,7 @@ class OcrdAnybaseocrCropper(Processor):
 			fname = pcgts.get_Page().imageFilename
 			#fname = str(fname)
 			print("Process file: ", fname)
-#            base, _ = ocrolib.allsplitext(fname)
+			base, _ = ocrolib.allsplitext(fname)
 			binImg = ocrolib.read_image_binary(fname)
 
 			lineDetectH = []
@@ -453,7 +425,7 @@ class OcrdAnybaseocrCropper(Processor):
 			self.parameter['colSeparator'] = int(width * self.parameter['colSeparator'])
 
 			if len(textarea) > 1:
-				textarea = self.crop_area(textarea, binImg, rgb)
+				textarea = self.crop_area(textarea, binImg, rgb,base)
 				if len(textarea) == 0:
 					self.select_borderLine(fpath, lineDetectH, lineDetectV)
 			elif len(textarea) == 1 and (height*width*0.5 < (abs(textarea[0][2]-textarea[0][0]) * abs(textarea[0][3]-textarea[0][1]))):
@@ -463,7 +435,7 @@ class OcrdAnybaseocrCropper(Processor):
 				y1 = y1-40 if y1 > 40 else 0
 				y2 = y2+40 if y2 < height-40 else height
 
-	#            self.save_pf(base, [x1, y1, x2, y2])
+				self.save_pf(base, [x1, y1, x2, y2])
 			else:
 				self.select_borderLine(fpath, lineDetectH, lineDetectV)
 			
@@ -476,74 +448,9 @@ class OcrdAnybaseocrCropper(Processor):
 				ID=ID,
 				file_grp=self.output_file_grp,
 				pageId=input_file.pageId,
-				mimetype=MIMETYPE_PAGE,
+				mimetype="image/png",
+				url=base + ".pf.png",
 				local_filename='%s/%s' % (self.output_file_grp, ID),
 				content=to_xml(pcgts).encode('utf-8'),
 			)                
 
-#            return '%s.pf.png' % base
-'''
-def main():
-	parser = argparse.ArgumentParser("""
-	Image crop using non-linear processing.
-
-		python ocrd-anyBaseOCR-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-	""")
-
-	parser.add_argument('-p', '--parameter', type=str, help="Parameter file location")
-	parser.add_argument('-O', '--Output', default=None, help="output directory")
-	parser.add_argument('-w', '--work', type=str, help="Working directory location", default=".")
-	parser.add_argument('-I', '--Input', default=None, help="Input directory")
-	parser.add_argument('-m', '--mets', default=None, help="METs input file")
-	parser.add_argument('-o', '--OutputMets', default=None, help="METs output file")
-	parser.add_argument('-g', '--group', default=None, help="METs image group id")
-	args = parser.parse_args()
-
-	# Read parameter values from json file
-	param = {}
-	if args.parameter:
-		with open(args.parameter, 'r') as param_file:
-			param = json.loads(param_file.read())
-	param = parse_params_with_defaults(param, OCRD_TOOL['tools']['ocrd-anybaseocr-crop']['parameters'])
-	#  print(param)
-	# End to read parameters
-	resolver = Resolver()
-	workspace = resolver.workspace_from_url(args.mets, dst_dir=args.work)
-	cropper = OcrdAnybaseocrCropper(
-		workspace,
-		ocrd_tool=None,
-		input_file_grp=args.Input,
-		output_file_grp=args.Output,
-		parameter=args.parameter,
-	).process()
-#	ocrd_tool = cropper.ocrd_tool
-#	name = '%s v%s' % (ocrd_tool['executable'], cropper.version)
-	workspace.mets.add_agent(
-#		name=name,
-		_type='OTHER',
-		othertype='SOFTWARE',
-		role='OTHER',
-#		otherrole=otherrole
-	)
-	workspace.save_mets()
-'''	
-'''
-	# mendatory parameter check
-	if not args.mets or not args.Input or not args.Output or not args.work:
-		parser.print_help()
-		print("Example: python ocrd-anyBaseOCR-cropping.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-		sys.exit(0)
-
-	if args.work:
-		if not os.path.exists(args.work):
-			os.mkdir(args.work)
-
-	cropper = OcrdAnybaseocrCropper(param)
-	files = parseXML(args.mets, args.Input)
-	fnames = []
-	for i, fname in enumerate(files):
-		fnames.append(cropper.run(str(fname), i+1))
-	write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)
-
-'''

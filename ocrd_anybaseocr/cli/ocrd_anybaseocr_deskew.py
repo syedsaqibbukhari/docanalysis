@@ -116,7 +116,7 @@ class OcrdAnybaseocrDeskewer(Processor):
             binImg = self.workspace.resolve_image_as_pil(pcgts.get_Page().imageFilename)
             param = self.parameter
             fname = pcgts.get_Page().imageFilename        
-            #base, _ = ocrolib.allsplitext(fpath)
+            base, _ = ocrolib.allsplitext(fname)
             #basefile = ocrolib.allsplitext(os.path.basename(fpath))[0]
 
             if param['parallel'] < 2:
@@ -181,63 +181,15 @@ class OcrdAnybaseocrDeskewer(Processor):
             print_info("%s lo-hi (%.2f %.2f) angle %4.1f" % (pcgts.get_Page().imageFilename, lo, hi, angle))
             if param['parallel'] < 2:
                 print_info("writing")
-            #ocrolib.write_image_binary(base+".ds.png", deskewed)
-            #return base+".ds.png"
+            ocrolib.write_image_binary(base+".ds.png", deskewed)
+            
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
                 ID=ID,
                 file_grp=self.output_file_grp,
                 pageId=input_file.pageId,
-                mimetype=MIMETYPE_PAGE,
+                mimetype="image/png",
+                url=base + ".ds.png",
                 local_filename='%s/%s' % (self.output_file_grp, ID),
                 content=to_xml(pcgts).encode('utf-8'),
             )
-'''
-def main():
-    parser = argparse.ArgumentParser("""
-    Image deskewing using non-linear processing.
-
-        python ocrd-anyBaseOCR-deskew.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-    This is a compute-intensive deskew method that works on degraded and historical book pages.
-    """)
-
-    parser.add_argument('-p', '--parameter', type=str, help="Parameter file location")
-    parser.add_argument('-O', '--Output', default=None, help="output directory")
-    parser.add_argument('-w', '--work', type=str, help="Working directory location", default=".")
-    parser.add_argument('-I', '--Input', default=None, help="Input directory")
-    parser.add_argument('-m', '--mets', default=None, help="METs input file")
-    parser.add_argument('-o', '--OutputMets', default=None, help="METs output file")
-    parser.add_argument('-g', '--group', default=None, help="METs image group id")
-
-    args = parser.parse_args()
-
-    #args.files = ocrolib.glob_all(args.files)
-
-    # Read parameter values from json file
-    param = {}
-    if args.parameter:
-        with open(args.parameter, 'r') as param_file:
-            param = json.loads(param_file.read())
-    param = parse_params_with_defaults(param, OCRD_TOOL['tools']['ocrd-anybaseocr-deskew']['parameters'])
-    #print("%s" % param)
-    # End to read parameters
-
-    # mendatory parameter check
-    if not args.mets or not args.Input or not args.Output or not args.work:
-        parser.print_help()
-        print("Example: ocrd-anybaseocr-deskew -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-        sys.exit(0)
-
-    if args.work:
-        if not os.path.exists(args.work):
-            os.mkdir(args.work)
-
-    deskewer = OcrdAnybaseocrDeskewer(param)
-    files = parseXML(args.mets, args.Input)
-    fnames = []
-    for i, fname in enumerate(files):
-        fnames.append(deskewer.run(str(fname), i+1))
-    write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)
-
-'''

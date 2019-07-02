@@ -181,65 +181,21 @@ class OcrdAnybaseocrBinarizer(Processor):
                 gray()
                 imshow(binarized)
                 ginput(1, max(0.1, self.parameter['debug']))
-            #base, _ = ocrolib.allsplitext(fname)
-            #ocrolib.write_image_binary(base+".bin.png", binarized)
-            #ocrolib.write_image_gray(base+".nrm.png", flat)
+            base, _ = ocrolib.allsplitext(fname)                                              
+            ocrolib.write_image_binary(base +".bin.png", binarized)
+            ocrolib.write_image_gray(base +".nrm.png", flat)
             # print("########### File path : ", base+".nrm.png")
             # write_to_xml(base+".bin.png")
-            #return base+".bin.png"
+            #return base+".bin.png"                                
+            
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
                 ID=ID,
                 file_grp=self.output_file_grp,
                 pageId=input_file.pageId,
-                mimetype=MIMETYPE_PAGE,
+                mimetype="image/png",
+                url=base + ".bin.png",
                 local_filename='%s/%s' % (self.output_file_grp, ID),
                 content=to_xml(pcgts).encode('utf-8'),
-            )                
-
-'''
-def main():
-    parser = argparse.ArgumentParser("""
-    Image binarization using non-linear processing.
-
-            python ocrd-anyBaseOCR-binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)
-
-    This is a compute-intensive binarization method that works on degraded
-    and historical book pages.
-    """)
-
-    parser.add_argument('-p', '--parameter', type=str, help="Parameter file location")
-    parser.add_argument('-w', '--work', type=str, help="Working directory location", default=".")
-    parser.add_argument('-I', '--Input', default=None, help="Input directory")
-    parser.add_argument('-O', '--Output', default=None, help="output directory")
-    parser.add_argument('-m', '--mets', default=None, help="METs input file")
-    parser.add_argument('-o', '--OutputMets', default=None, help="METs output file")
-    parser.add_argument('-g', '--group', default=None, help="METs image group id")
-    args = parser.parse_args()
-
-    # Read parameter values from json file
-    param = {}
-    if args.parameter:
-        with open(args.parameter, 'r') as param_file:
-            param = json.loads(param_file.read())
-    param = parse_params_with_defaults(param, OCRD_TOOL['tools']['ocrd-anybaseocr-binarize']['parameters'])
-    #  print(param)
-    # End to read parameters
-
-    # mandatory parameter check
-    if not args.mets or not args.Input or not args.Output or not args.work:
-        parser.print_help()
-        print("Example: ocrd_anyBaseOCR_binarize.py -m (mets input file path) -I (input-file-grp name) -O (output-file-grp name) -w (Working directory)")
-        sys.exit(0)
-
-    if args.work:
-        if not os.path.exists(args.work):
-            os.mkdir(args.work)
-
-    binarizer = OcrdAnybaseocrBinarizer(param)
-    files = parseXML(args.mets, args.Input)
-    fnames = []
-    for i, fname in enumerate(files):
-        fnames.append(binarizer.run(str(fname), i+1))
-    write_to_xml(fnames, args.mets, args.Output, args.OutputMets, args.work)
-'''
+            )
+            

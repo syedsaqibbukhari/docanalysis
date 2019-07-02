@@ -14,6 +14,90 @@
     <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/optimization/deskewing">
       <mets:name>ocrd-anybaseocr-deskew v0.0.1</mets:name>
     </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/binarization">
+      <mets:name>ocrd-anybaseocr-binarize v0.0.1</mets:name>
+    </mets:agent>
+    <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/optimization/deskewing">
+      <mets:name>ocrd-anybaseocr-deskew v0.0.1</mets:name>
+    </mets:agent>
     <mets:agent TYPE="OTHER" OTHERTYPE="SOFTWARE" ROLE="OTHER" OTHERROLE="preprocessing/cropping">
       <mets:name>ocrd-anybaseocr-crop v0.0.1</mets:name>
     </mets:agent>
@@ -30,22 +114,22 @@
   <mets:fileSec>
     <mets:fileGrp USE="OCR-D-IMG">
       <mets:file GROUPID="P_becker_quaestio_1586_00013" ID="becker_quaestio_1586_00013" MIMETYPE="image/tiff">
-        <mets:FLocat LOCTYPE="URL" xlink:href="samples/becker_quaestio_1586_00013.tif"/>
+        <mets:FLocat LOCTYPE="URL" xlink:href="OCR-D-IMG/becker_quaestio_1586_00013.tif"/>
       </mets:file>
     </mets:fileGrp>
     <mets:fileGrp USE="OCR-D-IMG-BIN">
-      <mets:file MIMETYPE="application/vnd.prima.page+xml" ID="OCR-D-IMG-BIN_0001">
-        <mets:FLocat xlink:href="OCR-D-IMG-BIN/OCR-D-IMG-BIN_0001"/>
+      <mets:file MIMETYPE="image/png" ID="OCR-D-IMG-BIN_0001">
+        <mets:FLocat xlink:href="OCR-D-IMG/becker_quaestio_1586_00013.bin.png"/>
       </mets:file>
     </mets:fileGrp>
     <mets:fileGrp USE="OCR-D-IMG-DESKEW">
-      <mets:file MIMETYPE="application/vnd.prima.page+xml" ID="OCR-D-IMG-DESKEW_0001">
-        <mets:FLocat xlink:href="OCR-D-IMG-DESKEW/OCR-D-IMG-DESKEW_0001"/>
+      <mets:file MIMETYPE="image/png" ID="OCR-D-IMG-DESKEW_0001">
+        <mets:FLocat xlink:href="OCR-D-IMG/becker_quaestio_1586_00013.ds.png"/>
       </mets:file>
     </mets:fileGrp>
     <mets:fileGrp USE="OCR-D-IMG-CROP">
-      <mets:file MIMETYPE="application/vnd.prima.page+xml" ID="OCR-D-IMG-CROP_0001">
-        <mets:FLocat xlink:href="OCR-D-IMG-CROP/OCR-D-IMG-CROP_0001"/>
+      <mets:file MIMETYPE="image/png" ID="OCR-D-IMG-CROP_0001">
+        <mets:FLocat xlink:href="OCR-D-IMG/becker_quaestio_1586_00013.pf.png"/>
       </mets:file>
     </mets:fileGrp>
   </mets:fileSec>
