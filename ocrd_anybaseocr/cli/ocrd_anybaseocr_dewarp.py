@@ -4,12 +4,17 @@ import sys, os, argparse
 from ..utils import parseXML, write_to_xml, print_info, parse_params_with_defaults, print_error
 from ..constants import OCRD_TOOL
 
+from ocrd import Processor
+from ocrd_utils import getLogger, concat_padded
+from ocrd_modelfactory import page_from_file
 
 
-class OcrdAnybaseocrDewarper():
+class OcrdAnybaseocrDewarper(Processor):
 
-	def __init__(self, param):
-		self.param = param		
+	def __init__(self, *args, **kwargs):
+		kwargs['ocrd_tool'] = OCRD_TOOL['tools']['ocrd-anybaseocr-dewarp']
+		kwargs['version'] = OCRD_TOOL['version']
+		super(OcrdAnybaseocrDewarper, self).__init__(*args, **kwargs)
 	
 	def dewarping(self, tmp, dest, path):
 		os.system("python" + pix2pixHD_path + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" % (os.path.dirname(tmp), dest, self.param['gpu_id'], self.param['resizeHeight'], self.param['resizeWidth'], self.param['imgresize']))

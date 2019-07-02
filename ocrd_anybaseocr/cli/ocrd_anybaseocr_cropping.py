@@ -44,7 +44,6 @@ from PIL import Image
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
-from ocrd.resolver import Resolver
 from ocrd_utils import getLogger, concat_padded
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
