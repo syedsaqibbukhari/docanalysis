@@ -50,7 +50,7 @@ from scipy.ndimage import filters, interpolation, morphology
 from scipy import stats
 import numpy as np
 
-from ..utils import parseXML, write_to_xml, print_info, parse_params_with_defaults, print_error
+from ..utils import print_info, print_error
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor

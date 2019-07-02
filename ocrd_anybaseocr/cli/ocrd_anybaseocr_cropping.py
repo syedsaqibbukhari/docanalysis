@@ -40,7 +40,7 @@ import cv2
 from PIL import Image
 import xml.etree.ElementTree as ET
 
-from ..utils import parseXML, write_to_xml, parse_params_with_defaults
+
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
@@ -54,8 +54,7 @@ from ocrd_models.ocrd_page import (
 )
 from ocrd_models.ocrd_page_generateds import BorderType
 
-#TODO: clean not needed code parts
-#TODO: add cli through ocrd api
+
 class OcrdAnybaseocrCropper(Processor):
 
 	def __init__(self, *args, **kwargs):
