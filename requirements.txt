@@ -3,4 +3,5 @@ opencv-python >= 3.4
 ocrd-fork-ocropy >= 1.4.0a3
 ocrd-fork-pylsd >= 0.0.3
 click
-ocrd
+ocrd==1.0.0b10
+ocrd_modelfactory
