@@ -65,10 +65,10 @@
       "categories": ["Image preprocessing"],
       "steps": ["preprocessing/dewarp"],
       "parameters": {
-        "imgresize": 	{"type": "string",                      "default": "resize_and_crop", "description": "run on original size image"},
-        "gpu_id": 	{"type": "number", "format": "integer", "default": 0,    "description": "gpu id"},
-        "resizeHeight": {"type": "number", "format": "integer", "default": 1024, "description": "resized image height"},
-        "resizeWidth": 	{"type": "number", "format": "integer", "default": 1024, "description": "resized image width"}
+        "imgresize":    { "type": "string",                      "default": "resize_and_crop", "description": "run on original size image"},
+        "gpu_id":       { "type": "number", "format": "integer", "default": 0,    "description": "gpu id"},
+        "resizeHeight": { "type": "number", "format": "integer", "default": 1024, "description": "resized image height"},
+        "resizeWidth":  { "type": "number", "format": "integer", "default": 1024, "description": "resized image width"}
       }
     }
   }
