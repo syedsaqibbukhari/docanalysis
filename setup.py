@@ -19,9 +19,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.ocrd_anybaseocr_binarize:main',
-            'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.ocrd_anybaseocr_cropping:main',
-            'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.ocrd_anybaseocr_deskew:main',
+            'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_binarize',
+            'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_cropping',
+            'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_deskew',
             'ocrd-anybaseocr-dewarp   = ocrd_anybaseocr.cli.ocrd_anybaseocr_dewarp:main'
         ]
     },
