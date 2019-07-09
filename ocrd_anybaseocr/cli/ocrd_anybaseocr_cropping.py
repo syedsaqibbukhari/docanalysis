@@ -28,10 +28,7 @@
 
 # *********** LICENSE ********************
 # ======================================================================
-import argparse
-import json
-import os
-import sys
+
 
 import numpy as np
 from pylsd.lsd import lsd

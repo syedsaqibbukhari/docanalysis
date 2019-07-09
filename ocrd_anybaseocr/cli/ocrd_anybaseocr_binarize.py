@@ -38,12 +38,10 @@
 #!/usr/bin/env python
 
 
-import argparse
-import json
+
+
 import ocrolib
 import os
-import os.path
-import sys
 
 from pylab import amin, amax, mean, ginput, ones, clip, imshow, median, ion, gray, minimum, array, clf
 from scipy.ndimage import filters, interpolation, morphology

@@ -42,11 +42,7 @@
 #!/usr/bin/env python
 
 
-import argparse
-import os
-import os.path
-import sys
-import json
+
 
 import numpy as np
 from pylab import amin, amax, linspace, mean, var, plot, ginput, ones, clip, imshow
