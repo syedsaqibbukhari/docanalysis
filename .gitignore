@@ -8,3 +8,16 @@ debug*
 *.egg-info
 repo
 tests/assets
+
+# Packages
+dist
+build
+lib
+lib64
+work_dir
+
+**/ocrd_anybaseocr/samples
+**/ocrd_anybaseocr/work_dir
+**/ocrd_anybaseocr/OCR-D-*
+**/ocrd_anybaseocr/models/latest_net_G.pth
+

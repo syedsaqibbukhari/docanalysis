@@ -44,7 +44,7 @@ A permissive license whose main conditions require preservation of copyright and
 - Move following files from pix2pixHD_modified folder to pix2pixHD.
 	- test.py move/replace to pix2pixHD/test.py
 	- visualizer.py move/replace to pix2pixHD/util/visualizer.py
-- Download model from https://cloud.dfki.de/owncloud/index.php/s/GZ6zZtyF6yDPbwm. Copy the file into "models" folder
+- Download model from https://cloud.dfki.de/owncloud/index.php/s/3zKza5sRfQB3ygy. Copy the file into "models" folder
 
 # Usage:
 python ocrd-anybaseocr-dewarp.py -m (path to met input file) -I (Input group name) -O (Output group name) -w (Working directory)
