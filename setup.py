@@ -22,7 +22,7 @@ setup(
             'ocrd-anybaseocr-binarize = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_binarize',
             'ocrd-anybaseocr-crop     = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_cropping',
             'ocrd-anybaseocr-deskew   = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_deskew',
-            'ocrd-anybaseocr-dewarp   = ocrd_anybaseocr.cli.ocrd_anybaseocr_dewarp:main'
+            'ocrd-anybaseocr-dewarp   = ocrd_anybaseocr.cli.cli:ocrd_anybaseocr_dewarp'
         ]
     },
 )
