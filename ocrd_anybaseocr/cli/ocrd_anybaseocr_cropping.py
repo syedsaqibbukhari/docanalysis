@@ -10,7 +10,7 @@
 # Note:
 # 1) this work has been done in DFKI, Kaiserslautern, Germany.
 # 2) The parameters values are read from ocrd-anyBaseOCR-parameter.json file. The values can be changed in that file.
-# 3) The command line IO usage is based on "OCR-D" project guidelines (https://ocr-d.github.io/). A sample image file (samples/becker_quaestio_1586_00013.tif) and mets.xml (work_dir/mets.xml) are provided. The sequence of operations is: binarization, deskewing, cropping and dewarping (or can also be: binarization, dewarping, deskewing, and cropping; depends upon use-case).
+# 3) The command line IO usage is based on "OCR-D" project guidelines (https://ocr-d.github.io/). A sample image file (samples/becker_quaestio_1586_00013.tif) and mets.xml (mets.xml) are provided. The sequence of operations is: binarization, deskewing, cropping and dewarping (or can also be: binarization, dewarping, deskewing, and cropping; depends upon use-case).
 
 # *********** Method Behaviour ********************
 # This function takes a document image as input and crops/selects the page content

@@ -9,7 +9,7 @@ from ocrd_utils import getLogger, concat_padded
 from ocrd_modelfactory import page_from_file
 import shutil
 
-#TODO: Change the pix2pixHD path (Currently it is a constant due to ocr-d core issue)
+#TODO: Change the hardcoded pix2pixHD path (Currently it is a constant due to ocr-d core issue)
 
 class OcrdAnybaseocrDewarper(Processor):
 
