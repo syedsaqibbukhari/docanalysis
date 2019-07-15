@@ -46,9 +46,17 @@ A permissive license whose main conditions require preservation of copyright and
 	- visualizer.py move/replace to pix2pixHD/util/visualizer.py
 - Download model from https://cloud.dfki.de/owncloud/index.php/s/3zKza5sRfQB3ygy. Copy the file into "models" folder
 
+
 # Usage:
-python ocrd-anybaseocr-dewarp.py -m (path to met input file) -I (Input group name) -O (Output group name) -w (Working directory)
+```sh
+python ocrd-anybaseocr-dewarp.py -m (path to met input file) -I (Input group name) -O (Output group name)
 	[-p (path to parameter file) -o (METs output filename)]
+```
 
 # Example: 
-python ocrd-anybaseocr-dewarp.py -m work_dir/mets.xml -I OCR-D-IMG-CROP -O OCR-D-IMG-DEWARP -w work_dir
+```sh
+ocrd-anybaseocr-dewarp.py \
+   -m mets.xml \
+   -I OCR-D-IMG-CROP \
+   -O OCR-D-IMG-DEWARP
+```

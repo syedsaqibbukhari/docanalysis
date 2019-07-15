@@ -41,15 +41,14 @@ This file is dependend on ocrolib library which comes from https://github.com/tm
 
 # Usage:
 ```sh
-python ocrd-anybaseocr-binarize.py -m (path to met input file) -I (Input group name) -O (Output group name) -w (Working directory)
+python ocrd-anybaseocr-binarize.py -m (path to met input file) -I (Input group name) -O (Output group name)
 	[-p (path to parameter file) -o (METs output filename)]
 ```
 
 # Example: 
 ```sh
-python ocrd-anybaseocr-binarize.py \
-   -m work_dir/mets.xml \
+ocrd-anybaseocr-binarize.py \
+   -m mets.xml \
    -I OCR-D-IMG \
-   -O OCR-D-IMG-BIN \
-   -w work_dir
+   -O OCR-D-IMG-BIN
 ```
