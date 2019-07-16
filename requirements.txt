@@ -5,4 +5,7 @@ ocrd-fork-pylsd >= 0.0.3
 click
 ocrd==1.0.0b10
 ocrd_modelfactory
+torch>=1.1.0
+torchvision
+dominate>=2.3.5
 
