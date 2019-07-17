@@ -448,4 +448,3 @@ class OcrdAnybaseocrCropper(Processor):
                                 local_filename='%s/%s' % (self.output_file_grp, ID),
                                 content=to_xml(pcgts).encode('utf-8'),
                         )                
-
