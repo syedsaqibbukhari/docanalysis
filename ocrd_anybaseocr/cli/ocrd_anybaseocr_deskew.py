@@ -64,7 +64,7 @@ class OcrdAnybaseocrDeskewer(Processor):
         kwargs['version'] = OCRD_TOOL['version']
         super(OcrdAnybaseocrDeskewer, self).__init__(*args, **kwargs)
 
-    def estimate_skew_angle(self, image, angles):
+    def estimate_skew_angle(self, image, angles):        
         param = self.parameter
         estimates = []
 
@@ -81,10 +81,9 @@ class OcrdAnybaseocrDeskewer(Processor):
 
     def process(self):
         for (n, input_file) in enumerate(self.input_files):            
-            pcgts = page_from_file(self.workspace.download_file(input_file))                
-            binImg = self.workspace.resolve_image_as_pil(pcgts.get_Page().imageFilename)
-            param = self.parameter
+            pcgts = page_from_file(self.workspace.download_file(input_file))                            
             fname = pcgts.get_Page().imageFilename        
+            param = self.parameter        
             base, _ = ocrolib.allsplitext(fname)
             #basefile = ocrolib.allsplitext(os.path.basename(fpath))[0]
 
