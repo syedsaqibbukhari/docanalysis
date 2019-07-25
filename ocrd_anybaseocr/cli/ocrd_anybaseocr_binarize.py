@@ -89,13 +89,17 @@ class OcrdAnybaseocrBinarizer(Processor):
             ginput(1, self.parameter['debug'])
 
         def process(self):
-            for (n, input_file) in enumerate(self.input_files):            
+            for (n, input_file) in enumerate(self.input_files):                 
                 pcgts = page_from_file(self.workspace.download_file(input_file))                                
-                fname = pcgts.get_Page().imageFilename
-                print_info("# %s" % (fname))                        
-                raw = ocrolib.read_image_gray(fname)
+                fname = pcgts.get_Page().imageFilename      
+                img = self.workspace.resolve_image_as_pil(fname)
+                
+                print_info("# %s" % (fname))                                                                                   
+                raw = ocrolib.read_image_gray(img.filename)                                
+                
                 self.dshow(raw, "input")
-                # perform image normalization
+
+                # perform image normalization            
                 image = raw-amin(raw)
                 if amax(image) == amin(image):
                     print_info("# image is empty: %s" % (fname))
@@ -176,7 +180,7 @@ class OcrdAnybaseocrBinarizer(Processor):
                     gray()
                     imshow(binarized)
                     ginput(1, max(0.1, self.parameter['debug']))
-                base, _ = ocrolib.allsplitext(fname)                                              
+                base, _ = ocrolib.allsplitext(img.filename)                
                 ocrolib.write_image_binary(base +".bin.png", binarized)
                 # ocrolib.write_image_gray(base +".nrm.png", flat)
                 # print("########### File path : ", base+".nrm.png")
@@ -193,4 +197,4 @@ class OcrdAnybaseocrBinarizer(Processor):
                         local_filename='%s/%s' % (self.output_file_grp, ID),
                         content=to_xml(pcgts).encode('utf-8')
                 )
-                        
+                

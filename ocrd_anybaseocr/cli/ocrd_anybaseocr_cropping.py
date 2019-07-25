@@ -41,7 +41,7 @@ from PIL import Image
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
-from ocrd_utils import getLogger, concat_padded
+from ocrd_utils import getLogger, concat_padded,MIMETYPE_PAGE
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
     CoordsType,
@@ -405,7 +405,7 @@ class OcrdAnybaseocrCropper(Processor):
         for (n, input_file) in enumerate(self.input_files):            
             pcgts = page_from_file(self.workspace.download_file(input_file))                
             fname = pcgts.get_Page().imageFilename
-            img = self.workspace.resolve_image_as_pil(fname)                      
+            img = self.workspace.resolve_image_as_pil(fname)
             #fname = str(fname)
             print("Process file: ", fname)
             base, _ = ocrolib.allsplitext(fname)
@@ -439,17 +439,17 @@ class OcrdAnybaseocrCropper(Processor):
                 min_x ,min_y, max_x, max_y = textarea[0]
             else:
                 min_x ,min_y, max_x, max_y = self.select_borderLine(img_array_rr, lineDetectH, lineDetectV)
-            
+                        
             brd = BorderType(Coords=CoordsType("%i,%i %i,%i %i,%i %i,%i" % (min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
-            pcgts.get_Page().set_Border(brd)                
+            pcgts.get_Page().set_Border(brd)
 
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
                 ID=ID,
                 file_grp=self.output_file_grp,
                 pageId=input_file.pageId,
-                mimetype="image/png",
-                url=base + ".pf.png",
+                mimetype=MIMETYPE_PAGE,
+                #url=base + ".pf.png",
                 local_filename='%s/%s' % (self.output_file_grp, ID),
                 content=to_xml(pcgts).encode('utf-8')
             )            
