@@ -54,8 +54,9 @@ from ..constants import OCRD_TOOL
 
 from ocrd import Processor
 from ocrd_modelfactory import page_from_file
-from ocrd_models.ocrd_page import to_xml
+from ocrd_models.ocrd_page import to_xml,  TextRegionType
 from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
+from ocrd_models.ocrd_page_generateds import RegionType
 
 class OcrdAnybaseocrDeskewer(Processor):
 
@@ -81,15 +82,16 @@ class OcrdAnybaseocrDeskewer(Processor):
 
     def process(self):
         for (n, input_file) in enumerate(self.input_files):            
-            pcgts = page_from_file(self.workspace.download_file(input_file))                            
-            fname = pcgts.get_Page().imageFilename        
+            pcgts = page_from_file(self.workspace.download_file(input_file))
+            fname = pcgts.get_Page().imageFilename
+            img = self.workspace.resolve_image_as_pil(fname)
             param = self.parameter        
             base, _ = ocrolib.allsplitext(fname)
             #basefile = ocrolib.allsplitext(os.path.basename(fpath))[0]
 
             if param['parallel'] < 2:
-                print_info("=== %s " % (pcgts.get_Page().imageFilename))
-            raw = ocrolib.read_image_gray(fname)
+                print_info("=== %s " % (fname))
+            raw = ocrolib.read_image_gray(img.filename)
 
             flat = raw
             #flat = np.array(binImg)
@@ -151,6 +153,9 @@ class OcrdAnybaseocrDeskewer(Processor):
                 print_info("writing")
             ocrolib.write_image_binary(base+".ds.png", deskewed)
             
+            orientation = TextRegionType(orientation=angle)            
+            pcgts.get_Page().add_TextRegion(orientation)
+                        
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
                 ID=ID,
@@ -159,5 +164,5 @@ class OcrdAnybaseocrDeskewer(Processor):
                 mimetype="image/png",
                 url=base + ".ds.png",
                 local_filename='%s/%s' % (self.output_file_grp, ID),
-                content=to_xml(pcgts).encode('utf-8'),
+                content=to_xml(pcgts).encode('utf-8')
             )

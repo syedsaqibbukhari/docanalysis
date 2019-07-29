@@ -1,5 +1,15 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
+from git import Repo
+import os
+from ocrd_anybaseocr.constants import pix2pixHD_url
+from pathlib import Path
+
+
+repo_path = os.path.dirname(os.path.realpath(__file__))  + "/ocrd_anybaseocr/pix2pixHD"
+if not Path(repo_path).exists():
+    print("Downloading pix2pixHD repository.")
+    Repo.clone_from(pix2pixHD_url, repo_path)
 
 setup(
     name = 'ocrd-anybaseocr',

@@ -8,4 +8,5 @@ ocrd_modelfactory
 torch>=1.1.0
 torchvision
 dominate>=2.3.5
+gitpython
 
