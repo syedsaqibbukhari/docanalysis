@@ -8,7 +8,6 @@ from ocrd import Processor
 from ocrd_utils import getLogger, concat_padded
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import to_xml,parse
-from ocrd_models.ocrd_page_generateds import BorderType
 import shutil
 from pathlib import Path
 from PIL import Image
@@ -33,10 +32,10 @@ class OcrdAnybaseocrDewarper(Processor):
         def check_pix2pix(self):               
             abs_path = Path(self.parameter['pix2pixHD']).absolute()
             work_dir = Path(self.workspace.directory + "/pix2pixHD")            
-            if Path(abs_path).exists():                
+            if Path(abs_path).is_dir():                
                 return abs_path
             else:
-                if Path(work_dir).exists():                    
+                if Path(work_dir).is_dir():                    
                     return work_dir
                 else:                    
                     return None
@@ -52,9 +51,10 @@ class OcrdAnybaseocrDewarper(Processor):
             if self.check_cuda():
                 path = self.check_pix2pix()
                 if not (path is None):
-                    for (n, input_file) in enumerate(self.input_files):                                                                        
-                        local_input_file = self.workspace.download_file(input_file)
-                        pcgts = parse(local_input_file.url, silence=True)
+                    for (n, input_file) in enumerate(self.input_files):
+                        #local_input_file = self.workspace.download_file(input_file)
+                        #pcgts = parse(local_input_file.url, silence=True)
+                        pcgts = page_from_file(self.workspace.download_file(input_file))
                         image_coords = pcgts.get_Page().get_Border().get_Coords().points.split()
                         fname = pcgts.get_Page().imageFilename
                                                 
@@ -75,17 +75,29 @@ class OcrdAnybaseocrDewarper(Processor):
                         #os.system("cp %s %s" % (str(fname), os.path.join(img_tmp_dir, os.path.basename(str(fname)))))                        
                         #os.system("mkdir -p %s" % img_tmp_dir)                        
                         #os.system("cp %s %s" % (str(fname), os.path.join(img_tmp_dir, os.path.basename(str(fname)))))                    
-                    os.system("python " + str(path) + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" % (os.path.dirname(img_tmp_dir), img_dir, self.parameter['gpu_id'], self.parameter['resizeHeight'], self.parameter['resizeWidth'], self.parameter['imgresize']))
-                    synthesized_image = filename.split(".")[0] + "_synthesized_image.jpg"
-                    pix2pix_img_dir = img_dir + "/models/test_latest/images/"
-                    dewarped_image = Path(pix2pix_img_dir + synthesized_image)  
-                    if(dewarped_image.is_file()):
-                        shutil.copy(dewarped_image, img_dir + "/"+ filename.split(".")[0] + "_dw.jpg")                      
+                        
+                        os.system("python " + str(path) + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" % (os.path.dirname(img_tmp_dir), img_dir, self.parameter['gpu_id'], self.parameter['resizeHeight'], self.parameter['resizeWidth'], self.parameter['imgresize']))
+                        synthesized_image = filename.split(".")[0] + "_synthesized_image.jpg"
+                        pix2pix_img_dir = img_dir + "/models/test_latest/images/"
+                        dewarped_image = Path(pix2pix_img_dir + synthesized_image)                          
+                        if(dewarped_image.is_file()):
+                            shutil.copy(dewarped_image, img_dir + "/"+ filename.split(".")[0] + ".dw.jpg")                      
                     
-                    if(Path(img_tmp_dir).is_dir()):
-                        shutil.rmtree(img_tmp_dir)
-                    if(Path(img_dir + "/models").is_dir()):
-                        shutil.rmtree(img_dir + "/models")
+                        if(Path(img_tmp_dir).is_dir()):
+                            shutil.rmtree(img_tmp_dir)
+                        if(Path(img_dir + "/models").is_dir()):
+                            shutil.rmtree(img_dir + "/models")
+                        
+                        
+                        ID = concat_padded(self.output_file_grp, n)
+                        self.workspace.add_file(
+                        ID=ID,
+                        file_grp=self.output_file_grp,
+                        pageId=input_file.pageId,
+                        mimetype="image/png",
+                        url=base + ".ds.png"                                            
+                        )
+            
                     
                 else:
                     print(""" Please check if pix2pixHD is downloaded in path docanalysis/ocrd_anybaseocr 
