@@ -1,16 +1,12 @@
 import torch
 import sys
 import os
+import shutil
 
-from ..utils import parseXML, write_to_xml, print_info, parse_params_with_defaults, print_error
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
-from ocrd_utils import getLogger, concat_padded
-from ocrd_modelfactory import page_from_file
-from ocrd_models.ocrd_page import to_xml, parse
-from ocrd_models.ocrd_page_generateds import BorderType
-import shutil
+from ocrd_models.ocrd_page import parse
 from pathlib import Path
 from PIL import Image
 import ocrolib
@@ -23,22 +19,13 @@ class OcrdAnybaseocrDewarper(Processor):
         kwargs['version'] = OCRD_TOOL['version']
         super(OcrdAnybaseocrDewarper, self).__init__(*args, **kwargs)
 
-    def check_cuda(self):
-        if torch.cuda.is_available():
-            return True
-        else:
-            return False
-
     def check_pix2pix(self):
         abs_path = Path(self.parameter['pix2pixHD']).absolute()
         work_dir = Path(self.workspace.directory + "/pix2pixHD")
         if Path(abs_path).exists():
             return abs_path
-        else:
-            if Path(work_dir).exists():
-                return work_dir
-            else:
-                return None
+        if Path(work_dir).exists():
+            return work_dir
 
     def crop_image(self, image_path, crop_region):
         img = Image.open(image_path)
@@ -46,10 +33,10 @@ class OcrdAnybaseocrDewarper(Processor):
         return cropped
 
     def process(self):
-        if self.check_cuda():
+        if torch.cuda.is_available():
             path = self.check_pix2pix()
             if not (path is None):
-                for (n, input_file) in enumerate(self.input_files):
+                for (_, input_file) in enumerate(self.input_files):
                     local_input_file = self.workspace.download_file(input_file)
                     pcgts = parse(local_input_file.url, silence=True)
                     image_coords = pcgts.get_Page().get_Border().get_Coords().points.split()
@@ -89,10 +76,10 @@ class OcrdAnybaseocrDewarper(Processor):
                     shutil.rmtree(img_dir + "/models")
 
             else:
-                print(""" Please check if pix2pixHD is downloaded in path docanalysis/ocrd_anybaseocr 
+                print(""" Please check if pix2pixHD is downloaded in path docanalysis/ocrd_anybaseocr
                         If not, you can clone the repository from the following url:
                             https://github.com/NVIDIA/pix2pixHD
-                        Alternatively, you can change the pix2pixHD path in ocrd-json file                            
+                        Alternatively, you can change the pix2pixHD path in ocrd-json file
                         """)
 
         else:
