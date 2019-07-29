@@ -6,17 +6,18 @@ from ocrd_anybaseocr.constants import pix2pixHD_url
 from pathlib import Path
 
 
-repo_path = os.path.dirname(os.path.realpath(__file__))  + "/ocrd_anybaseocr/pix2pixHD"
+repo_path = os.path.dirname(os.path.realpath(
+    __file__)) + "/ocrd_anybaseocr/pix2pixHD"
 if not Path(repo_path).exists():
     print("Downloading pix2pixHD repository.")
     Repo.clone_from(pix2pixHD_url, repo_path)
 
 setup(
-    name = 'ocrd-anybaseocr',
-    version = 'v0.0.1',
-    author = "Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib",
-    author_email = "Saqib.Bukhari@dfki.de, Mohammad_mohsin.reza@dfki.de, Md_ajraf.rakib@dfki.de",
-    url = "https://github.com/syedsaqibbukhari/docanalysis",
+    name='ocrd-anybaseocr',
+    version='v0.0.1',
+    author="Syed Saqib Bukhari, Mohammad Mohsin Reza, Md. Ajraf Rakib",
+    author_email="Saqib.Bukhari@dfki.de, Mohammad_mohsin.reza@dfki.de, Md_ajraf.rakib@dfki.de",
+    url="https://github.com/syedsaqibbukhari/docanalysis",
     license='Apache License 2.0',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

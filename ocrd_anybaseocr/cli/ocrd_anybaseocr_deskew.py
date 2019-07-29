@@ -42,8 +42,6 @@
 #!/usr/bin/env python
 
 
-
-
 import numpy as np
 from pylab import amin, amax, linspace, mean, var, plot, ginput, ones, clip, imshow
 from scipy.ndimage import filters, interpolation, morphology
@@ -58,6 +56,7 @@ from ocrd_models.ocrd_page import to_xml,  TextRegionType
 from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
 from ocrd_models.ocrd_page_generateds import RegionType
 
+
 class OcrdAnybaseocrDeskewer(Processor):
 
     def __init__(self, *args, **kwargs):
@@ -65,12 +64,13 @@ class OcrdAnybaseocrDeskewer(Processor):
         kwargs['version'] = OCRD_TOOL['version']
         super(OcrdAnybaseocrDeskewer, self).__init__(*args, **kwargs)
 
-    def estimate_skew_angle(self, image, angles):        
+    def estimate_skew_angle(self, image, angles):
         param = self.parameter
         estimates = []
 
         for a in angles:
-            v = mean(interpolation.rotate(image, a, order=0, mode='constant'), axis=1)
+            v = mean(interpolation.rotate(
+                image, a, order=0, mode='constant'), axis=1)
             v = var(v)
             estimates.append((v, a))
         if param['debug'] > 0:
@@ -79,13 +79,12 @@ class OcrdAnybaseocrDeskewer(Processor):
         _, a = max(estimates)
         return a
 
-
     def process(self):
-        for (n, input_file) in enumerate(self.input_files):            
+        for (n, input_file) in enumerate(self.input_files):
             pcgts = page_from_file(self.workspace.download_file(input_file))
             fname = pcgts.get_Page().imageFilename
             img = self.workspace.resolve_image_as_pil(fname)
-            param = self.parameter        
+            param = self.parameter
             base, _ = ocrolib.allsplitext(fname)
             #basefile = ocrolib.allsplitext(os.path.basename(fpath))[0]
 
@@ -107,13 +106,13 @@ class OcrdAnybaseocrDeskewer(Processor):
                 ma = param['maxskew']
                 ms = int(2*param['maxskew']*param['skewsteps'])
                 angle = self.estimate_skew_angle(est, linspace(-ma, ma, ms+1))
-                flat = interpolation.rotate(flat, angle, mode='constant', reshape=0)
+                flat = interpolation.rotate(
+                    flat, angle, mode='constant', reshape=0)
                 flat = amax(flat)-flat
             else:
                 angle = 0
 
-            
-            #self.write_angles_to_pageXML(base,angle)
+            # self.write_angles_to_pageXML(base,angle)
             # estimate low and high thresholds
             if param['parallel'] < 2:
                 print_info("estimating thresholds")
@@ -128,8 +127,10 @@ class OcrdAnybaseocrDeskewer(Processor):
                 v = est-filters.gaussian_filter(est, e*20.0)
                 v = filters.gaussian_filter(v**2, e*20.0)**0.5
                 v = (v > 0.3*amax(v))
-                v = morphology.binary_dilation(v, structure=ones((int(e*50), 1)))
-                v = morphology.binary_dilation(v, structure=ones((1, int(e*50))))
+                v = morphology.binary_dilation(
+                    v, structure=ones((int(e*50), 1)))
+                v = morphology.binary_dilation(
+                    v, structure=ones((1, int(e*50))))
                 if param['debug'] > 0:
                     imshow(v)
                     ginput(1, param['debug'])
@@ -148,14 +149,15 @@ class OcrdAnybaseocrDeskewer(Processor):
             deskewed = 1*(flat > param['threshold'])
 
             # output the normalized grayscale and the thresholded images
-            print_info("%s lo-hi (%.2f %.2f) angle %4.1f" % (pcgts.get_Page().imageFilename, lo, hi, angle))
+            print_info("%s lo-hi (%.2f %.2f) angle %4.1f" %
+                       (pcgts.get_Page().imageFilename, lo, hi, angle))
             if param['parallel'] < 2:
                 print_info("writing")
             ocrolib.write_image_binary(base+".ds.png", deskewed)
-            
-            orientation = TextRegionType(orientation=angle)            
+
+            orientation = TextRegionType(orientation=angle)
             pcgts.get_Page().add_TextRegion(orientation)
-                        
+
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
                 ID=ID,

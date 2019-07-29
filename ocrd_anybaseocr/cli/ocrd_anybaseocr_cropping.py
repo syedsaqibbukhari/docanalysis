@@ -37,11 +37,10 @@ import cv2
 from PIL import Image
 
 
-
 from ..constants import OCRD_TOOL
 
 from ocrd import Processor
-from ocrd_utils import getLogger, concat_padded,MIMETYPE_PAGE
+from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
     CoordsType,
@@ -52,19 +51,19 @@ from ocrd_models.ocrd_page_generateds import BorderType
 
 class OcrdAnybaseocrCropper(Processor):
 
-    def __init__(self, *args, **kwargs):        
+    def __init__(self, *args, **kwargs):
         kwargs['ocrd_tool'] = OCRD_TOOL['tools']['ocrd-anybaseocr-crop']
         kwargs['version'] = OCRD_TOOL['version']
         super(OcrdAnybaseocrCropper, self).__init__(*args, **kwargs)
 
-    def write_crop_coordinate(self, base, coordinate):        
+    def write_crop_coordinate(self, base, coordinate):
         x1, y1, x2, y2 = coordinate
         with open(base + '-frame-pf.dat', 'w') as fp:
-            fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))  
+            fp.write(str(x1)+"\t"+str(y1)+"\t"+str(x2-x1)+"\t"+str(y2-y1))
 
-    def remove_rular(self, arg):        
+    def remove_rular(self, arg):
         #base = arg.split(".")[0]
-        #img = cv2.cvtColor(arg, cv2.COLOR_RGB2BGR)        
+        #img = cv2.cvtColor(arg, cv2.COLOR_RGB2BGR)
         #gray = cv2.cvtColor(arg, cv2.COLOR_BGR2GRAY)
         contours, _ = cv2.findContours(
             arg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -101,7 +100,8 @@ class OcrdAnybaseocrCropper(Processor):
 
         # Finally check number of black pixel to avoid false rular
         if predictRular:
-            predictRular = sorted(predictRular, key=lambda x: (x[4]), reverse=True)
+            predictRular = sorted(
+                predictRular, key=lambda x: (x[4]), reverse=True)
             x, y, w, h, _ = predictRular[0]
             cv2.rectangle(arg, (x-15, y-15), (x+w+20, y+h+20),
                           (255, 255, 255), cv2.FILLED)
@@ -110,10 +110,11 @@ class OcrdAnybaseocrCropper(Processor):
     def BorderLine(self, MaxBoundary, lines, index, flag, lineDetectH, lineDetectV):
         getLine = 1
         LastLine = []
-        if flag  in ('top', 'left'):
+        if flag in ('top', 'left'):
             for i in range(len(lines)-1):
                 if(abs(lines[i][index]-lines[i+1][index])) <= 15 and lines[i][index] < MaxBoundary:
-                    LastLine = [lines[i][0], lines[i][1], lines[i][2], lines[i][3]]
+                    LastLine = [lines[i][0], lines[i]
+                                [1], lines[i][2], lines[i][3]]
                     getLine += 1
                 elif getLine >= 3:
                     break
@@ -122,7 +123,8 @@ class OcrdAnybaseocrCropper(Processor):
         elif flag in ('bottom', 'right'):
             for i in reversed(list(range(len(lines)-1))):
                 if(abs(lines[i][index]-lines[i+1][index])) <= 15 and lines[i][index] > MaxBoundary:
-                    LastLine = [lines[i][0], lines[i][1], lines[i][2], lines[i][3]]
+                    LastLine = [lines[i][0], lines[i]
+                                [1], lines[i][2], lines[i][3]]
                     getLine += 1
                 elif getLine >= 3:
                     break
@@ -150,7 +152,6 @@ class OcrdAnybaseocrCropper(Processor):
                     min(LastLine[0], LastLine[2]), LastLine[3]
                 ))
 
-
     def get_intersect(self, a1, a2, b1, b2):
         s = np.vstack([a1, a2, b1, b2])        # s for stacked
         h = np.hstack((s, np.ones((4, 1))))  # h for homogeneous
@@ -161,7 +162,6 @@ class OcrdAnybaseocrCropper(Processor):
             # return (float('inf'), float('inf'))
             return (0, 0)
         return (x/z, y/z)
-
 
     def detect_lines(self, arg):
         Hline = []
@@ -184,18 +184,21 @@ class OcrdAnybaseocrCropper(Processor):
         Vline.sort(key=lambda x: (x[0]), reverse=False)
         return imgHeight, imgWidth, Hline, Vline
 
-
     def select_borderLine(self, arg, lineDetectH, lineDetectV):
         imgHeight, imgWidth, Hlines, Vlines = self.detect_lines(arg)
 
         # top side
-        self.BorderLine(imgHeight*0.25, Hlines, 1, "top", lineDetectH, lineDetectV)
+        self.BorderLine(imgHeight*0.25, Hlines, 1,
+                        "top", lineDetectH, lineDetectV)
         # left side
-        self.BorderLine(imgWidth*0.4, Vlines, 0, "left", lineDetectH, lineDetectV)
+        self.BorderLine(imgWidth*0.4, Vlines, 0, "left",
+                        lineDetectH, lineDetectV)
         # bottom side
-        self.BorderLine(imgHeight*0.75, Hlines, 1, "bottom", lineDetectH, lineDetectV)
+        self.BorderLine(imgHeight*0.75, Hlines, 1,
+                        "bottom", lineDetectH, lineDetectV)
         # right side
-        self.BorderLine(imgWidth*0.6, Vlines, 0, "right", lineDetectH, lineDetectV)
+        self.BorderLine(imgWidth*0.6, Vlines, 0, "right",
+                        lineDetectH, lineDetectV)
 
         intersectPoint = []
         for l1 in lineDetectH:
@@ -234,8 +237,7 @@ class OcrdAnybaseocrCropper(Processor):
 
         return [Xstart, Ystart, Xend, Yend]
 
-
-    def filter_noisebox(self, textarea, height, width):             
+    def filter_noisebox(self, textarea, height, width):
         tmp = []
         st = True
 
@@ -243,7 +245,8 @@ class OcrdAnybaseocrCropper(Processor):
             textarea = [list(x) for x in textarea if x not in tmp]
             if len(textarea) > 1:
                 tmp = []
-                textarea = sorted(textarea, key=lambda x: (x[3]), reverse=False)
+                textarea = sorted(
+                    textarea, key=lambda x: (x[3]), reverse=False)
                 # print textarea
                 x11, y11, x12, y12 = textarea[0]
                 x21, y21, x22, y22 = textarea[1]
@@ -263,7 +266,6 @@ class OcrdAnybaseocrCropper(Processor):
                 break
 
         return textarea
-
 
     def detect_textarea(self, arg):
         textarea = []
@@ -300,7 +302,6 @@ class OcrdAnybaseocrCropper(Processor):
 
         return textarea, arg, height, width
 
-
     def save_pf(self, base, textarea):
         x1, y1, x2, y2 = textarea
 
@@ -308,8 +309,6 @@ class OcrdAnybaseocrCropper(Processor):
         img2 = img.crop((x1, y1, x2, y2))
         img2.save(base + '.pf.png')
         self.write_crop_coordinate(base, textarea)
-        
-
 
     def filter_area(self, textarea, binImg):
         height, width = binImg.shape
@@ -318,7 +317,6 @@ class OcrdAnybaseocrCropper(Processor):
             if (height*width*self.parameter['minArea'] < (abs(area[2]-area[0]) * abs(area[3]-area[1]))):
                 tmp.append(area)
         return tmp
-
 
     def marge_columns(self, textarea):
         tmp = []
@@ -348,7 +346,6 @@ class OcrdAnybaseocrCropper(Processor):
             tmp.append(textarea[-1])
 
         return tmp+marge
-
 
     def crop_area(self, textarea, binImg, rgb):
         height, width = binImg.shape
@@ -401,8 +398,8 @@ class OcrdAnybaseocrCropper(Processor):
         return textarea
 
     def process(self):
-        for (n, input_file) in enumerate(self.input_files):            
-            pcgts = page_from_file(self.workspace.download_file(input_file))                
+        for (n, input_file) in enumerate(self.input_files):
+            pcgts = page_from_file(self.workspace.download_file(input_file))
             fname = pcgts.get_Page().imageFilename
             img = self.workspace.resolve_image_as_pil(fname)
             #fname = str(fname)
@@ -410,23 +407,27 @@ class OcrdAnybaseocrCropper(Processor):
             base, _ = ocrolib.allsplitext(fname)
 
             img_array = ocrolib.pil2array(img)
-            img_array_bin = np.array(img_array > ocrolib.midrange(img_array), 'i')
+            img_array_bin = np.array(
+                img_array > ocrolib.midrange(img_array), 'i')
 
             lineDetectH = []
             lineDetectV = []
             img_array_rr = self.remove_rular(img_array)
-            
-            textarea, img_array_rr_ta, height, width = self.detect_textarea(img_array_rr)
-            self.parameter['colSeparator'] = int(width * self.parameter['colSeparator'])
-            
+
+            textarea, img_array_rr_ta, height, width = self.detect_textarea(
+                img_array_rr)
+            self.parameter['colSeparator'] = int(
+                width * self.parameter['colSeparator'])
 
             if len(textarea) > 1:
-                textarea = self.crop_area(textarea, img_array_bin, img_array_rr_ta)
-            
+                textarea = self.crop_area(
+                    textarea, img_array_bin, img_array_rr_ta)
+
                 if len(textarea) == 0:
-                    min_x ,min_y, max_x, max_y = self.select_borderLine(img_array_rr, lineDetectH, lineDetectV)
+                    min_x, min_y, max_x, max_y = self.select_borderLine(
+                        img_array_rr, lineDetectH, lineDetectV)
                 else:
-                    min_x ,min_y, max_x, max_y = textarea[0]            
+                    min_x, min_y, max_x, max_y = textarea[0]
             elif len(textarea) == 1 and (height*width*0.5 < (abs(textarea[0][2]-textarea[0][0]) * abs(textarea[0][3]-textarea[0][1]))):
                 x1, y1, x2, y2 = textarea[0]
                 x1 = x1-20 if x1 > 20 else 0
@@ -435,11 +436,13 @@ class OcrdAnybaseocrCropper(Processor):
                 y2 = y2+40 if y2 < height-40 else height
 
                 #self.save_pf(base, [x1, y1, x2, y2])
-                min_x ,min_y, max_x, max_y = textarea[0]
+                min_x, min_y, max_x, max_y = textarea[0]
             else:
-                min_x ,min_y, max_x, max_y = self.select_borderLine(img_array_rr, lineDetectH, lineDetectV)
-                        
-            brd = BorderType(Coords=CoordsType("%i,%i %i,%i %i,%i %i,%i" % (min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
+                min_x, min_y, max_x, max_y = self.select_borderLine(
+                    img_array_rr, lineDetectH, lineDetectV)
+
+            brd = BorderType(Coords=CoordsType("%i,%i %i,%i %i,%i %i,%i" % (
+                min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
             pcgts.get_Page().set_Border(brd)
 
             ID = concat_padded(self.output_file_grp, n)
@@ -451,4 +454,4 @@ class OcrdAnybaseocrCropper(Processor):
                 #url=base + ".pf.png",
                 local_filename='%s/%s' % (self.output_file_grp, ID),
                 content=to_xml(pcgts).encode('utf-8')
-            )            
+            )
