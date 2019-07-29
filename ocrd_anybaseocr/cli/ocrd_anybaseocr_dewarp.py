@@ -19,14 +19,6 @@ class OcrdAnybaseocrDewarper(Processor):
         kwargs['version'] = OCRD_TOOL['version']
         super(OcrdAnybaseocrDewarper, self).__init__(*args, **kwargs)
 
-    def check_pix2pix(self):
-        abs_path = Path(self.parameter['pix2pixHD']).absolute()
-        work_dir = Path(self.workspace.directory + "/pix2pixHD")
-        if Path(abs_path).exists():
-            return abs_path
-        if Path(work_dir).exists():
-            return work_dir
-
     def crop_image(self, image_path, crop_region):
         img = Image.open(image_path)
         cropped = img.crop(crop_region)
@@ -38,13 +30,14 @@ class OcrdAnybaseocrDewarper(Processor):
             print("Your system has no CUDA installed. No GPU detected.")
             sys.exit(1)
 
-        path = self.check_pix2pix()
-        if not path:
-            print(""" Please check if pix2pixHD is downloaded in path docanalysis/ocrd_anybaseocr
-                    If not, you can clone the repository from the following url:
-                        https://github.com/NVIDIA/pix2pixHD
-                    Alternatively, you can change the pix2pixHD path in ocrd-json file
-                    """)
+        path = Path(self.parameter['pix2pixHD']).absolute()
+        if not Path(path).exists():
+            print("""\
+                NVIDIA's pix2pixHD was not found at '%s'. Make sure the `pix2pixHD` parameter
+                points to the local path to the cloned pix2pixHD repository.
+
+                pix2pixHD can be downloaded from https://github.com/NVIDIA/pix2pixHD
+                """ % path)
             sys.exit(1)
 
         for (_, input_file) in enumerate(self.input_files):
