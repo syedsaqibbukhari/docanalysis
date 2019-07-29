@@ -45,7 +45,6 @@ from ocrd_utils import getLogger, concat_padded,MIMETYPE_PAGE
 from ocrd_modelfactory import page_from_file
 from ocrd_models.ocrd_page import (
     CoordsType,
-
     to_xml
 )
 from ocrd_models.ocrd_page_generateds import BorderType

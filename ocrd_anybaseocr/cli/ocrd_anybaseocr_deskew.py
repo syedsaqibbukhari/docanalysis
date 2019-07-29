@@ -54,9 +54,9 @@ from ..constants import OCRD_TOOL
 
 from ocrd import Processor
 from ocrd_modelfactory import page_from_file
-from ocrd_models.ocrd_page import to_xml
+from ocrd_models.ocrd_page import to_xml,  TextRegionType
 from ocrd_utils import getLogger, concat_padded, MIMETYPE_PAGE
-from ocrd_models.ocrd_page_generateds import ImageRegionType
+from ocrd_models.ocrd_page_generateds import RegionType
 
 class OcrdAnybaseocrDeskewer(Processor):
 
@@ -152,8 +152,9 @@ class OcrdAnybaseocrDeskewer(Processor):
             if param['parallel'] < 2:
                 print_info("writing")
             ocrolib.write_image_binary(base+".ds.png", deskewed)
-
-            #orientation = ImageRegionType(orientation=angle)
+            
+            orientation = TextRegionType(orientation=angle)            
+            pcgts.get_Page().add_TextRegion(orientation)
                         
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
