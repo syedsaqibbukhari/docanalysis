@@ -95,7 +95,7 @@ class OcrdAnybaseocrDewarper(Processor):
                         file_grp=self.output_file_grp,
                         pageId=input_file.pageId,
                         mimetype="image/png",
-                        url=base + ".ds.png"                                            
+                        url=base + ".dw.png"                                            
                         )
             
                     
