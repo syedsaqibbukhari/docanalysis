@@ -8,6 +8,8 @@
       "description": "Deskew images with the algorithm from ocropy",
       "categories": ["Image preprocessing"],
       "steps": ["preprocessing/optimization/deskewing"],
+      "input_file_grp": ["OCR-D-IMG"],
+      "output_file_grp": ["OCR-D-IMG-DESKEW"],
       "parameters": {
         "escale":    {"type": "number", "format": "float",   "default": 1.0, "description": "scale for estimating a mask over the text region"},
         "bignore":   {"type": "number", "format": "float",   "default": 0.1, "description": "ignore this much of the border for threshold estimation"},
@@ -24,7 +26,9 @@
       "executable": "ocrd-anybaseocr-binarize",
       "description": "Binarize images with the algorithm from ocropy",
       "categories": ["Image preprocessing"],
-      "steps": ["preprocessing/binarization"],
+      "steps": ["preprocessing/optimization/binarization"],
+      "input_file_grp": ["OCR-D-IMG"],
+      "output_file_grp": ["OCR-D-IMG-BIN"],
       "parameters": {
         "nocheck":   {"type": "boolean",                     "default": false, "description": "disable error checking on inputs"},
         "show":      {"type": "boolean",                     "default": false, "description": "display final results"},
@@ -45,7 +49,9 @@
       "executable": "ocrd-anybaseocr-crop",
       "description": "Image crop using non-linear processing",
       "categories": ["Image preprocessing"],
-      "steps": ["preprocessing/cropping"],
+      "steps": ["preprocessing/optimization/cropping"],
+      "input_file_grp": ["OCR-D-IMG"],
+      "output_file_grp": ["OCR-D-IMG-CROP"],
       "parameters": {
         "colSeparator":  {"type": "number", "format": "float", "default": 0.04, "description": "consider space between column. 25% of width"},
         "maxRularArea":  {"type": "number", "format": "float", "default": 0.3, "description": "Consider maximum rular area"},
@@ -63,7 +69,9 @@
       "executable": "ocrd-anybaseocr-dewarp",
       "description": "dewarp image with anyBaseOCR",
       "categories": ["Image preprocessing"],
-      "steps": ["preprocessing/dewarp"],
+      "steps": ["preprocessing/optimization/dewarping"],
+      "input_file_grp": ["OCR-D-IMG"],
+      "output_file_grp": ["OCR-D-IMG-DEWARP"],
       "parameters": {
         "imgresize":    { "type": "string",                      "default": "resize_and_crop", "description": "run on original size image"},
         "pix2pixHD":    { "type": "string",                      "default": "pix2pixHD", "description": "Path to pix2pixHD library"},
