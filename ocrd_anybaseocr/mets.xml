@@ -4,7 +4,7 @@
     <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
       <mets:name>DFG-Koordinierungsprojekt zur Weiterentwicklung von Verfahren der Optical Character Recognition (OCR-D)</mets:name>
       <mets:note>OCR-D</mets:note>
-    </mets:agent>    
+    </mets:agent>        
   </mets:metsHdr>
   <mets:dmdSec ID="DMDLOG_0001">
     <mets:mdWrap MDTYPE="MODS">
@@ -19,6 +19,9 @@
     <mets:fileGrp USE="OCR-D-IMG">
       <mets:file GROUPID="P_becker_quaestio_1586_00013" ID="becker_quaestio_1586_00013" MIMETYPE="image/tiff">
         <mets:FLocat LOCTYPE="URL" xlink:href="OCR-D-IMG/becker_quaestio_1586_00013.tif"/>
+      </mets:file>
+      <mets:file GROUPID="00000001" ID="00000001" MIMETYPE="image/jpg">
+        <mets:FLocat LOCTYPE="URL" xlink:href="https://digital.slub-dresden.de/data/kitodo/GottDie_453779263/GottDie_453779263_tif/jpegs/00000001.tif.original.jpg"/>
       </mets:file>
     </mets:fileGrp>    
   </mets:fileSec>
