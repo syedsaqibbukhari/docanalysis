@@ -65,11 +65,11 @@ class OcrdAnybaseocrCropper(Processor):
     def remove_rular(self, arg):
         #base = arg.split(".")[0]
         #img = cv2.cvtColor(arg, cv2.COLOR_RGB2BGR)
-        #gray = cv2.cvtColor(arg, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(arg, cv2.COLOR_BGR2GRAY)
         contours, _ = cv2.findContours(
-            arg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        height, width = arg.shape
+        height, width, _ = arg.shape
         imgArea = height*width
 
         # Get bounding box x,y,w,h of each contours
@@ -167,9 +167,9 @@ class OcrdAnybaseocrCropper(Processor):
     def detect_lines(self, arg):
         Hline = []
         Vline = []
-        # gray = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
-        imgHeight, imgWidth = arg.shape
-        lines = lsd(arg)
+        gray = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
+        imgHeight, imgWidth, _ = arg.shape
+        lines = lsd(gray)
 
         for i in range(lines.shape[0]):
             pt1 = (int(lines[i, 0]), int(lines[i, 1]))
@@ -270,11 +270,11 @@ class OcrdAnybaseocrCropper(Processor):
 
     def detect_textarea(self, arg):
         textarea = []
-        # small = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
-        height, width = arg.shape
+        small = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
+        height, width, _ = arg.shape
 
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-        grad = cv2.morphologyEx(arg, cv2.MORPH_GRADIENT, kernel)
+        grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
 
         _, bw = cv2.threshold(
             grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -457,6 +457,6 @@ class OcrdAnybaseocrCropper(Processor):
                 pageId=input_file.pageId,
                 mimetype=MIMETYPE_PAGE,
                 local_filename=os.path.join(self.output_file_grp,
-                                            ID + '.xml'),
+                                            file_id + '.xml'),
                 content=to_xml(pcgts).encode('utf-8')
             )
