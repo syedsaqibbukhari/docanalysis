@@ -30,6 +30,7 @@
 # ======================================================================
 
 
+import os
 import numpy as np
 from pylsd.lsd import lsd
 import ocrolib
@@ -64,11 +65,11 @@ class OcrdAnybaseocrCropper(Processor):
     def remove_rular(self, arg):
         #base = arg.split(".")[0]
         #img = cv2.cvtColor(arg, cv2.COLOR_RGB2BGR)
-        #gray = cv2.cvtColor(arg, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(arg, cv2.COLOR_BGR2GRAY)
         contours, _ = cv2.findContours(
-            arg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        height, width = arg.shape
+        height, width, _ = arg.shape
         imgArea = height*width
 
         # Get bounding box x,y,w,h of each contours
@@ -166,9 +167,9 @@ class OcrdAnybaseocrCropper(Processor):
     def detect_lines(self, arg):
         Hline = []
         Vline = []
-        # gray = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
-        imgHeight, imgWidth = arg.shape
-        lines = lsd(arg)
+        gray = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
+        imgHeight, imgWidth, _ = arg.shape
+        lines = lsd(gray)
 
         for i in range(lines.shape[0]):
             pt1 = (int(lines[i, 0]), int(lines[i, 1]))
@@ -269,11 +270,11 @@ class OcrdAnybaseocrCropper(Processor):
 
     def detect_textarea(self, arg):
         textarea = []
-        # small = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
-        height, width = arg.shape
+        small = cv2.cvtColor(arg, cv2.COLOR_RGB2GRAY)
+        height, width, _ = arg.shape
 
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-        grad = cv2.morphologyEx(arg, cv2.MORPH_GRADIENT, kernel)
+        grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
 
         _, bw = cv2.threshold(
             grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -311,7 +312,7 @@ class OcrdAnybaseocrCropper(Processor):
         self.write_crop_coordinate(base, textarea)
 
     def filter_area(self, textarea, binImg):
-        height, width = binImg.shape
+        height, width, _ = binImg.shape
         tmp = []
         for area in textarea:
             if (height*width*self.parameter['minArea'] < (abs(area[2]-area[0]) * abs(area[3]-area[1]))):
@@ -348,7 +349,7 @@ class OcrdAnybaseocrCropper(Processor):
         return tmp+marge
 
     def crop_area(self, textarea, binImg, rgb):
-        height, width = binImg.shape
+        height, width, _ = binImg.shape
 
         textarea = np.unique(textarea, axis=0)
         i = 0
@@ -445,13 +446,17 @@ class OcrdAnybaseocrCropper(Processor):
                 min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
             pcgts.get_Page().set_Border(brd)
 
-            ID = concat_padded(self.output_file_grp, n)
+            # Use input_file's basename for the new file -
+            # this way the files retain the same basenames:
+            file_id = input_file.ID.replace(self.input_file_grp, self.output_file_grp)
+            if file_id == input_file.ID:
+                file_id = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
-                ID=ID,
+                ID=file_id,
                 file_grp=self.output_file_grp,
                 pageId=input_file.pageId,
                 mimetype=MIMETYPE_PAGE,
-                #url=base + ".pf.png",
-                local_filename='%s/%s' % (self.output_file_grp, ID),
+                local_filename=os.path.join(self.output_file_grp,
+                                            file_id + '.xml'),
                 content=to_xml(pcgts).encode('utf-8')
             )
