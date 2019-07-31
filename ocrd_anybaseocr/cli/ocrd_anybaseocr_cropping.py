@@ -312,7 +312,7 @@ class OcrdAnybaseocrCropper(Processor):
         self.write_crop_coordinate(base, textarea)
 
     def filter_area(self, textarea, binImg):
-        height, width = binImg.shape
+        height, width, _ = binImg.shape
         tmp = []
         for area in textarea:
             if (height*width*self.parameter['minArea'] < (abs(area[2]-area[0]) * abs(area[3]-area[1]))):
@@ -349,7 +349,7 @@ class OcrdAnybaseocrCropper(Processor):
         return tmp+marge
 
     def crop_area(self, textarea, binImg, rgb):
-        height, width = binImg.shape
+        height, width, _ = binImg.shape
 
         textarea = np.unique(textarea, axis=0)
         i = 0
