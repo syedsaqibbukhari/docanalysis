@@ -30,6 +30,7 @@
 # ======================================================================
 
 
+import os
 import numpy as np
 from pylsd.lsd import lsd
 import ocrolib
@@ -445,13 +446,17 @@ class OcrdAnybaseocrCropper(Processor):
                 min_x, min_y, max_x, min_y, max_x, max_y, min_x, max_y)))
             pcgts.get_Page().set_Border(brd)
 
-            ID = concat_padded(self.output_file_grp, n)
+            # Use input_file's basename for the new file -
+            # this way the files retain the same basenames:
+            file_id = input_file.ID.replace(self.input_file_grp, self.output_file_grp)
+            if file_id == input_file.ID:
+                file_id = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(
-                ID=ID,
+                ID=file_id,
                 file_grp=self.output_file_grp,
                 pageId=input_file.pageId,
                 mimetype=MIMETYPE_PAGE,
-                #url=base + ".pf.png",
-                local_filename='%s/%s' % (self.output_file_grp, ID),
+                local_filename=os.path.join(self.output_file_grp,
+                                            ID + '.xml'),
                 content=to_xml(pcgts).encode('utf-8')
             )
