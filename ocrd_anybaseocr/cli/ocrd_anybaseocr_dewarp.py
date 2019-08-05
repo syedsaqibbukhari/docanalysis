@@ -22,7 +22,7 @@ class OcrdAnybaseocrDewarper(Processor):
 
     def __init__(self, *args, **kwargs):
         kwargs['ocrd_tool'] = OCRD_TOOL['tools']['ocrd-anybaseocr-dewarp']
-        kwargs['version'] = OCRD_TOOL['version']
+        kwargs['version'] = OCRD_TOOL['version']        
         super(OcrdAnybaseocrDewarper, self).__init__(*args, **kwargs)
 
     def crop_image(self, image_path, crop_region):
@@ -31,13 +31,14 @@ class OcrdAnybaseocrDewarper(Processor):
         return cropped
 
     def process(self):
-
+        print(Path(self.parameter['pix2pixHD']).absolute())
         if not torch.cuda.is_available():
             print("Your system has no CUDA installed. No GPU detected.")
             sys.exit(1)
 
         path = Path(self.parameter['pix2pixHD']).absolute()
-        if not Path(path).exists():
+
+        if not Path(path).is_dir():
             print("""\
                 NVIDIA's pix2pixHD was not found at '%s'. Make sure the `pix2pixHD` parameter
                 points to the local path to the cloned pix2pixHD repository.
@@ -73,18 +74,18 @@ class OcrdAnybaseocrDewarper(Processor):
             #os.system("cp %s %s" % (str(fname), os.path.join(img_tmp_dir, os.path.basename(str(fname)))))
             #os.system("mkdir -p %s" % img_tmp_dir)
             #os.system("cp %s %s" % (str(fname), os.path.join(img_tmp_dir, os.path.basename(str(fname)))))
-        os.system("python " + str(path) + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" %
-                  (os.path.dirname(img_tmp_dir), img_dir, self.parameter['gpu_id'], self.parameter['resizeHeight'], self.parameter['resizeWidth'], self.parameter['imgresize']))
-        synthesized_image = filename.split(
-            ".")[0] + "_synthesized_image.jpg"
-        pix2pix_img_dir = img_dir + "/models/test_latest/images/"
-        dewarped_image = Path(pix2pix_img_dir + synthesized_image)
-        if(dewarped_image.is_file()):
-            shutil.copy(dewarped_image, img_dir + "/" +
-                        filename.split(".")[0] + "_dw.jpg")
+            os.system("python " + str(path) + "/test.py --dataroot %s --checkpoints_dir ./ --name models --results_dir %s --label_nc 0 --no_instance --no_flip --resize_or_crop none --n_blocks_global 10 --n_local_enhancers 2 --gpu_ids %s --loadSize %d --fineSize %d --resize_or_crop %s" %
+                      (os.path.dirname(img_tmp_dir), img_dir, self.parameter['gpu_id'], self.parameter['resizeHeight'], self.parameter['resizeWidth'], self.parameter['imgresize']))
+            synthesized_image = filename.split(
+                ".")[0] + "_synthesized_image.jpg"
+            pix2pix_img_dir = img_dir + "/models/test_latest/images/"
+            dewarped_image = Path(pix2pix_img_dir + synthesized_image)
+            if(dewarped_image.is_file()):
+                shutil.copy(dewarped_image, img_dir + "/" +
+                            filename.split(".")[0] + ".dw.jpg")
 
-        if(Path(img_tmp_dir).is_dir()):
-            shutil.rmtree(img_tmp_dir)
-        if(Path(img_dir + "/models").is_dir()):
-            shutil.rmtree(img_dir + "/models")
+            if(Path(img_tmp_dir).is_dir()):
+                shutil.rmtree(img_tmp_dir)
+            if(Path(img_dir + "/models").is_dir()):
+                shutil.rmtree(img_dir + "/models")
 

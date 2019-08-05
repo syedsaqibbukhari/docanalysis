@@ -37,13 +37,13 @@ Copyright 2014 Thomas M. Breuel
 
 # Usage:
 ```sh
-python ocrd-anybaseocr-deskew.py -m (path to met input file) -I (Input group name) -O (Output group name)
+ocrd-anybaseocr-deskew -m (path to METs input file) -I (Input group name) -O (Output group name)
 	[-p (path to parameter file) -o (METs output filename)]
 ```
 
 # Example: 
 ```sh
-ocrd-anybaseocr-deskew.py \
+ocrd-anybaseocr-deskew \
   -m mets.xml \
   -I OCR-D-IMG-BIN \
   -O OCR-D-IMG-DESKEW

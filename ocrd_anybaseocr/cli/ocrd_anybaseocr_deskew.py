@@ -155,8 +155,9 @@ class OcrdAnybaseocrDeskewer(Processor):
                 print_info("writing")
             ocrolib.write_image_binary(base+".ds.png", deskewed)
 
-            orientation = TextRegionType(orientation=angle)
-            pcgts.get_Page().add_TextRegion(orientation)
+            orientation = -angle
+            orientation = 180 - (180 - orientation) % 360
+            pcgts.get_Page().set_orientation(orientation)
 
             ID = concat_padded(self.output_file_grp, n)
             self.workspace.add_file(

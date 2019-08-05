@@ -34,7 +34,7 @@ Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses
 A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
 
 # Environment preparation:
-- python2.7
+- python3
 - scipy (i.e., pip install scipy)
 - opencv-python (i.e., pip install opencv-python)
 - PyTorch and torchvision for GPU support version (from http://pytorch.org)
@@ -49,13 +49,13 @@ A permissive license whose main conditions require preservation of copyright and
 
 # Usage:
 ```sh
-python ocrd-anybaseocr-dewarp.py -m (path to met input file) -I (Input group name) -O (Output group name)
+ocrd-anybaseocr-dewarp -m (path to METs input file) -I (Input group name) -O (Output group name)
 	[-p (path to parameter file) -o (METs output filename)]
 ```
 
 # Example: 
 ```sh
-ocrd-anybaseocr-dewarp.py \
+ocrd-anybaseocr-dewarp \
    -m mets.xml \
    -I OCR-D-IMG-CROP \
    -O OCR-D-IMG-DEWARP

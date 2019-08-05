@@ -27,12 +27,12 @@ This function takes a document image as input and crops/selects the page content
 
 # Usage:
 ```sh
-python ocrd-anybaseocr-cropping.py -m (path to met input file) -I (Input group name) -O (Output group name) 
+ocrd-anybaseocr-cropping -m (path to METs input file) -I (Input group name) -O (Output group name) 
 	[-p (path to parameter file) -o (METs output filename)]
 ```
 # Example:
 ```sh
-ocrd-anybaseocr-cropping.py \
+ocrd-anybaseocr-cropping \
    -m mets.xml \
    -I OCR-D-IMG-DESKEW \
    -O OCR-D-IMG-CROP

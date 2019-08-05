@@ -8,7 +8,7 @@
       "description": "Deskew images with the algorithm from ocropy",
       "categories": ["Image preprocessing"],
       "steps": ["preprocessing/optimization/deskewing"],
-      "input_file_grp": ["OCR-D-IMG"],
+      "input_file_grp": ["OCR-D-IMG-BIN"],
       "output_file_grp": ["OCR-D-IMG-DESKEW"],
       "parameters": {
         "escale":    {"type": "number", "format": "float",   "default": 1.0, "description": "scale for estimating a mask over the text region"},
@@ -50,7 +50,7 @@
       "description": "Image crop using non-linear processing",
       "categories": ["Image preprocessing"],
       "steps": ["preprocessing/optimization/cropping"],
-      "input_file_grp": ["OCR-D-IMG"],
+      "input_file_grp": ["OCR-D-IMG-DESKEW"],
       "output_file_grp": ["OCR-D-IMG-CROP"],
       "parameters": {
         "colSeparator":  {"type": "number", "format": "float", "default": 0.04, "description": "consider space between column. 25% of width"},
@@ -70,7 +70,7 @@
       "description": "dewarp image with anyBaseOCR",
       "categories": ["Image preprocessing"],
       "steps": ["preprocessing/optimization/dewarping"],
-      "input_file_grp": ["OCR-D-IMG"],
+      "input_file_grp": ["OCR-D-IMG-CROP"],
       "output_file_grp": ["OCR-D-IMG-DEWARP"],
       "parameters": {
         "imgresize":    { "type": "string",                      "default": "resize_and_crop", "description": "run on original size image"},
